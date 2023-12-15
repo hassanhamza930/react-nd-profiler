@@ -1,11 +1,10 @@
-;
 import React, { useState } from "react";
 import Input from "../Input";
 import Button from "../Button";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { handleSignUp } from "../../../helpers/auth";
-import { useNavigate} from "react-router-dom";
-import{Link}from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SignupForm = () => {
   const [child, setChild] = useState(false);
@@ -18,7 +17,7 @@ const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setIsLoading] = useState(false);
 
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   return (
     <form className="w-full">
       <div className="overflow-hidden">
@@ -132,7 +131,7 @@ const SignupForm = () => {
               email,
               password,
               role,
-              router,
+              navigate,
               setIsLoading
             )
           }

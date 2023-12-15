@@ -1,10 +1,9 @@
-;
 import React from "react";
 import Button from "../Button";
-import { sendEmail } from "@/helpers/email";
+// import { sendEmail } from "/helpers/email";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  elementId: string
+  elementId: string;
 }
 
 const SendMail: React.FC<Props> = ({ elementId }) => {
@@ -12,13 +11,13 @@ const SendMail: React.FC<Props> = ({ elementId }) => {
     const element = document.getElementById(elementId);
 
     if (element) {
-      console.log(element)
-      const pdfData = element.getAttribute('data-pdf'); // replace 'data-pdf' with the actual attribute name
-  
+      console.log(element);
+      const pdfData = element.getAttribute("data-pdf"); // replace 'data-pdf' with the actual attribute name
+
       if (pdfData) {
         // sendEmail(pdfData);
       } else {
-        console.error('PDF data not found in the element.');
+        console.error("PDF data not found in the element.");
       }
     } else {
       console.error(`Element with id ${elementId} not found.`);

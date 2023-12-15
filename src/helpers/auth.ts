@@ -1,4 +1,3 @@
-;
 import React from "react";
 import toast from "react-hot-toast";
 import {
@@ -9,7 +8,6 @@ import {
 import { auth, db } from "../config/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { User } from "../Types/index";
-import Cookies from "js-cookie";
 
 export const handleSignUp = async (
   e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -18,11 +16,11 @@ export const handleSignUp = async (
   email: string,
   password: string,
   role: string,
-  navigate: AppRouterInstance,
+  navigate: any, // eslint-disable-line
   setIsLoading: (args: boolean) => void
 ) => {
   e.preventDefault();
-  setIsLoading(true); 
+  setIsLoading(true);
   if (!firstName) {
     setIsLoading(false);
     return toast.error("first name cannot be empty");
@@ -59,7 +57,6 @@ export const handleSignUp = async (
         localStorage.setItem("role", role);
         localStorage.setItem("uid", uid);
         localStorage.setItem("isLoggedIn", "true");
-        Cookies.set("isLoggedIn", "true");
         toast.success("Account created successfully");
         navigate(`/dashboard/${role == "admin" ? "admin" : "user"}`);
         setIsLoading(false);
@@ -69,6 +66,7 @@ export const handleSignUp = async (
         toast.error(error.code);
         setIsLoading(false);
       });
+    // eslint-disable-next-line
   } catch (error: any) {
     console.error(error);
     toast.error(error.code);
@@ -80,7 +78,7 @@ export const handleLogin = async (
   e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   email: string,
   password: string,
-  navigate: AppRouterInstance,
+  navigate: any, // eslint-disable-line
   setIsLoading: (args: boolean) => void
 ) => {
   e.preventDefault();
@@ -103,10 +101,7 @@ export const handleLogin = async (
             localStorage.setItem("role", docSnapshot.data().role);
             localStorage.setItem("uid", uid);
             localStorage.setItem("isLoggedIn", "true");
-            Cookies.set("isLoggedIn", "true", {
-              expires: 7,
-              sameSite: "strict",
-            });
+
             navigate(
               `/dashboard/${
                 docSnapshot.data().role == "admin" ? "admin" : "user"
@@ -128,7 +123,7 @@ export const handleLogin = async (
 
 export const handleForgotPassword = async (
   e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  email: string,
+  email: string
 ) => {
   e.preventDefault();
   if (!email) {
@@ -138,15 +133,15 @@ export const handleForgotPassword = async (
   try {
     await sendPasswordResetEmail(auth, email);
     toast.success("Password reset email sent");
-    // navigate("/login");
+    // eslint-disable-next-line
   } catch (error: any) {
     console.error(error);
     toast.error(error.code);
   }
 };
 
-export const handleLogout = async (navigate: AppRouterInstance) => {
-  Cookies.remove("isLoggedIn");
+// eslint-disable-next-line
+export const handleLogout = async (navigate: any) => {
   localStorage.clear();
   navigate("/auth/login");
 };

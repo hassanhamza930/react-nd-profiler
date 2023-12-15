@@ -1,5 +1,4 @@
 import { Timestamp } from "firebase/firestore";
-import { Interface } from "readline";
 
 export interface User {
   firstName: string;

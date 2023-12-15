@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
-import { redirect, useNavigate} from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 
 export default function NotFound() {
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -14,7 +13,7 @@ export default function NotFound() {
     } else {
       navigate("/auth/login");
     }
-  }, [router]);
+  }, [navigate]);
 
   return (
     isAuthenticated && (
