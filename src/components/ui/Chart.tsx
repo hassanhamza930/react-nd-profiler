@@ -8,7 +8,9 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const Chart: React.FC<Props> = ({ sections, data }) => {
-  const [chartData, setChartData] = useState<any>();
+  const [chartData, setChartData] = useState<any>(); // eslint-disable-line
+
+  console.log(sections, data);
 
   useEffect(() => {
     setChartData({

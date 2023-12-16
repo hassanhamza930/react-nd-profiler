@@ -6,7 +6,6 @@ import {
   deleteDoc,
   doc,
   getDoc,
-  getDocs,
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
@@ -33,29 +32,26 @@ export const getSections = (
           };
 
           const subsectionsCollection = collection(doc.ref, "subsections");
-          const unsubscribeSubsections = onSnapshot(
-            subsectionsCollection,
-            (subsectionsSnapshot) => {
-              sectionData.subsections = subsectionsSnapshot.docs.map(
-                (subDoc) => ({
-                  id: subDoc.id,
-                  title: subDoc.data().title,
-                })
-              );
+          onSnapshot(subsectionsCollection, (subsectionsSnapshot) => {
+            sectionData.subsections = subsectionsSnapshot.docs.map(
+              (subDoc) => ({
+                id: subDoc.id,
+                title: subDoc.data().title,
+              })
+            );
 
-              const existingIndex = sections.findIndex(
-                (existingSection) => existingSection.id === sectionData.id
-              );
+            const existingIndex = sections.findIndex(
+              (existingSection) => existingSection.id === sectionData.id
+            );
 
-              if (existingIndex !== -1) {
-                sections[existingIndex] = sectionData;
-              } else {
-                sections.push(sectionData);
-              }
-
-              setSections([...sections]);
+            if (existingIndex !== -1) {
+              sections[existingIndex] = sectionData;
+            } else {
+              sections.push(sectionData);
             }
-          );
+
+            setSections([...sections]);
+          });
         }
       }
     );
@@ -72,7 +68,7 @@ export const getSubsectionById = async (
   surveyId: string,
   sectionId: string,
   subsectionId: string,
-  setSubsection: (data: Subsection) => void
+  setSubsection: (data: any) => void // eslint-disable-line
 ) => {
   try {
     const subsectionRef = doc(

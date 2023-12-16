@@ -30,6 +30,7 @@ export interface RootSurveyState {
 export interface Section {
   id: string;
   title: string;
+  subsections: Subsection[];
 }
 
 export interface Subsection {
@@ -48,7 +49,7 @@ export interface Options {
 export interface Question {
   id?: string;
   sectionId?: string;
-  subsectionId?:string;
+  subsectionId?: string;
   text: string;
   options: Options;
   timestamp?: Timestamp;
@@ -59,7 +60,7 @@ export interface Response {
   response: string;
   option: string;
   sectionId: string;
-  subsectionId:string;
+  subsectionId: string;
   surveyId: string;
   questionId: string;
 }
@@ -69,7 +70,15 @@ export interface ClassifiedData {
     totalQuestions: number;
     totalMarks: number;
     obtainedMarks: number;
-    responses: any[];
+    responses: any[]; //  eslint-disable-line
+    subsections: {
+      [subsectionId: string]: {
+        totalQuestions: number;
+        totalMarks: number;
+        obtainedMarks: number;
+        responses: any[]; //  eslint-disable-line
+      };
+    };
   };
 }
 

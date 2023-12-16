@@ -13,7 +13,7 @@ import { getResultsData } from "../../helpers/result";
 const SurveyCard = ({ survey }: { survey: Survey }) => {
   const [role, setRole] = useState("");
   const [questions, setQuestions] = useState<Array<Question>>();
-  const [results, setResults] = useState<any>();
+  const [results, setResults] = useState<any>(); // eslint-disable-line
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
@@ -60,14 +60,14 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
             } text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between`}
           >
             <div>
-              {role !== "admin" && (
+              {/* {role !== "admin" && (
                 <div className="h-1 w-full bg-black rounded-full mb-3">
                   <div
                     className="h-1 bg-white rounded-full"
                     style={{ width: progress + "%" }}
                   ></div>
                 </div>
-              )}
+              )} */}
               <Link
                 to={`/dashboard/survey/${survey.id}`}
                 className="text-3xl font-bold cursor-pointer"
@@ -81,8 +81,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                 </p>
               ) : (
                 <p className="text-[12px]">
-                  Completed {results && results?.length}/
-                  {questions && questions?.length} questions
+                  Completed {results && results?.length} questions
                 </p>
               )}
             </div>

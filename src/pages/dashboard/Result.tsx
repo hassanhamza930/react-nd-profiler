@@ -15,7 +15,7 @@ const Result = () => {
   const [results, setResults] = useState();
   const [survey, setSurvey] = useState<Survey>();
   const [sections, setSections] = useState<string[]>();
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<any>(); // eslint-disable-line
   const [user, setUser] = useState<User>();
   const [recommendations, setRecommendations] =
     useState<RecommendationData[]>();
@@ -76,12 +76,14 @@ const Result = () => {
         <div id="recommendations" className="pe-10">
           {recommendations?.map((val, index) => {
             return (
-              <div className="mb-7" key={index}>
-                <h2 className="text-3xl font-medium underline mb-3 -ms-5">
+              <div className="mb-7 p-5 rounded bg-[#FFF5D680] " key={index}>
+                <h2 className="text-2xl font-medium  mb-1 uppercase">
                   {val?.sectionTitle}
                 </h2>
+                <div className="h-[2px] w-full bg-slate-500/10 rounded-full mb-3" />
                 {val?.recommendation !== null && (
                   <div
+                    className="ms-2"
                     dangerouslySetInnerHTML={{ __html: val?.recommendation }}
                   />
                 )}

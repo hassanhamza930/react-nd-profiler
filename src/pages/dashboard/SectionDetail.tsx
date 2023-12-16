@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react";
-import { Question, Recommendation, Section } from "../../Types";
+import { Question, Section } from "../../Types";
 import Header from "../../components/header";
 import {
   deleteQuestion,
-  getQuestionsBySectionId,
   getQuestionsBySubsectionId,
 } from "../../helpers/questions";
-import { getSectionById, getSubsectionById } from "../../helpers/sections";
+import { getSubsectionById } from "../../helpers/sections";
 import Button from "../../components/ui/Button";
 import { MdDelete, MdEdit } from "react-icons/md";
 import Modal from "../../components/ui/Modal";
 import DeleteModal from "../../components/ui/Modals/DeleteModal";
 import CreateQuestion from "../../components/ui/Modals/Questions/CreateQuestion";
 import EditQuestion from "../../components/ui/Modals/Questions/EditQuestion";
-import CreateRecommendation from "../../components/ui/Modals/Recommendations/CreateRecommendation";
-import EditRecommendation from "../../components/ui/Modals/Recommendations/EditRecommendation";
-import { collection, doc, getDocs, getFirestore } from "firebase/firestore";
 
 const SectionDetail = () => {
   const [questions, setQuestions] = useState<Array<Question>>();
@@ -26,7 +22,7 @@ const SectionDetail = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const pathname = window.location.pathname;
   const surveyId = pathname.split("/")[3];
   const sectionId = pathname.split("/")[4];
@@ -34,16 +30,21 @@ const SectionDetail = () => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      await getSubsectionById(surveyId, sectionId,subsectionId, setSection);
-      getQuestionsBySubsectionId(surveyId, sectionId, subsectionId,setQuestions, setIsLoading);
+      await getSubsectionById(surveyId, sectionId, subsectionId, setSection);
+      getQuestionsBySubsectionId(
+        surveyId,
+        sectionId,
+        subsectionId,
+        setQuestions,
+        setIsLoading
+      );
     };
     fetchData();
-  }, [surveyId, sectionId,subsectionId]);
-
+  }, [surveyId, sectionId, subsectionId]);
 
   const handelClick = () => {
     if (!sectionId) return;
-    deleteQuestion(surveyId, sectionId,subsectionId, questionId!);
+    deleteQuestion(surveyId, sectionId, subsectionId, questionId!);
     setIsDeleteOpen(false);
     setQuestionId("");
   };
@@ -55,13 +56,13 @@ const SectionDetail = () => {
         <h2 className="text-2xl text-primary font-semibold my-4 capitalize">
           {section?.title}
         </h2>
-          <Button
-            className="bg-primary text-sm text-white w-[152px] h-8 md:px-3 px-3"
-            onClick={() => setIsOpen(true)}
-          >
-            Create Question
-          </Button>
-        </div>
+        <Button
+          className="bg-primary text-sm text-white w-[152px] h-8 md:px-3 px-3"
+          onClick={() => setIsOpen(true)}
+        >
+          Create Question
+        </Button>
+      </div>
       {!isLoading &&
         questions?.map((val: Question, index) => {
           return (

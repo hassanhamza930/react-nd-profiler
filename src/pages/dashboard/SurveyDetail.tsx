@@ -12,7 +12,6 @@ import { getQuestionsById } from "../../helpers/questions";
 import { Question, Recommendation, Section, Survey } from "../../Types";
 import Modal from "../../components/ui/Modal";
 import DeleteModal from "../../components/ui/Modals/DeleteModal";
-import { MdDelete, MdEdit } from "react-icons/md";
 import CreateSection from "../../components/ui/Modals/Sections/CreateSection";
 import EditSection from "../../components/ui/Modals/Sections/EditSection";
 import { getResultsData } from "../../helpers/result";
@@ -23,6 +22,7 @@ import CreateRecommendation from "../../components/ui/Modals/Recommendations/Cre
 import EditRecommendation from "../../components/ui/Modals/Recommendations/EditRecommendation";
 import CreateSubSection from "../../components/ui/Modals/Sections copy/CreateSubSection";
 import EditSubSection from "../../components/ui/Modals/Sections copy/EditSubSection";
+import { BiDotsVertical } from "react-icons/bi";
 
 const SurveyDetail = () => {
   const [questions, setQuestions] = useState<Array<Question>>();
@@ -37,10 +37,10 @@ const SurveyDetail = () => {
   const [sectionId, setSectionId] = useState<string>();
   const [subSectionId, setSubSectionId] = useState<string>();
   const [section, setSection] = useState<Section>();
-  const [subSection, setSubSection] = useState<Section>();
+  const [subSection, setSubSection] = useState<any>(); // eslint-disable-line
   const [role, setRole] = useState<string>();
   const [loading, setIsLoading] = useState(false);
-  const [results, setResults] = useState<any>();
+  const [results, setResults] = useState<any>(); // eslint-disable-line
   const [isDropDownOpen, setIsDropDownOpen] = useState<string>();
   const [isCreateRecoOpen, setIsCreateRecoOpen] = useState(false);
   const [isEditRecoOpen, setIsEditRecoOpen] = useState(false);
@@ -183,45 +183,27 @@ const SurveyDetail = () => {
                               <div className="relative inline-block">
                                 <button
                                   onClick={() => {
-                                    setIsDropDownOpen(val.id);
-                                    setSectionId(val.id);
+                                    setIsDropDownOpen(
+                                      isDropDownOpen == val.id
+                                        ? "nothing"
+                                        : val.id
+                                    );
+                                    setSectionId(
+                                      sectionId == val.id ? "" : val.id
+                                    );
                                   }}
-                                  className="relative z-10 block p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white dark:bg-gray-800 focus:outline-none"
+                                  className="relative z-10 block p-2 text-gray-700 bg-white border border-transparent rounded-md focus:outline-none hover:bg-slate-100"
                                 >
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="w-5 h-5"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                  >
-                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                                  </svg>
+                                  <BiDotsVertical />
                                 </button>
                                 {isDropDownOpen == val.id && (
-                                  <div className="absolute left-0 z-20 w-48 py-2 pt-4 origin-top-left bg-white rounded-md shadow-xl dark:bg-gray-800">
+                                  <div className="absolute left-0 z-20 w-48 py-2 pt-4 origin-top-left bg-white rounded-md shadow-xl ">
                                     <p
                                       onClick={() => {
-                                        setIsEditOpen(true);
-                                        setSection(val);
-                                      }}
-                                      className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
-                                    >
-                                      Edit Section
-                                    </p>
-                                    <p
-                                      onClick={() => {
-                                        setIsDeleteOpen(true);
-                                        setSectionId(val.id);
-                                      }}
-                                      className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
-                                    >
-                                      Delete Section
-                                    </p>
-                                    <p
-                                      onClick={() => {
+                                        setIsDropDownOpen("");
                                         setIsSubSectionCreateOpen(true);
                                       }}
-                                      className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                                      className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "
                                     >
                                       Create Sub Section
                                     </p>
@@ -232,21 +214,33 @@ const SurveyDetail = () => {
                                         } else {
                                           setIsCreateRecoOpen(true);
                                         }
+                                        setIsDropDownOpen("");
                                       }}
-                                      className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                                      className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "
                                     >
                                       {recommendations
                                         ? "Edit Recommendation"
                                         : "Create Recommendation"}
-                                    </p>
-                                    <hr />
+                                    </p>{" "}
                                     <p
-                                      onClick={() =>
-                                        setIsDropDownOpen("nothing")
-                                      }
-                                      className="block cursor-pointer px-4 py-2 mt-1 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                                      onClick={() => {
+                                        setIsEditOpen(true);
+                                        setIsDropDownOpen("");
+                                        setSection(val);
+                                      }}
+                                      className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "
                                     >
-                                      Close
+                                      Edit Section
+                                    </p>
+                                    <p
+                                      onClick={() => {
+                                        setIsDeleteOpen(true);
+                                        setIsDropDownOpen("");
+                                        setSectionId(val.id);
+                                      }}
+                                      className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "
+                                    >
+                                      Delete Section
                                     </p>
                                   </div>
                                 )}
@@ -265,29 +259,33 @@ const SurveyDetail = () => {
                                   <div className="relative inline-block">
                                     <button
                                       onClick={() => {
-                                        setIsDropDownOpen(subsection.id);
-                                        setSectionId(val.id);
-                                        setSubSectionId(subSection.id);
+                                        setIsDropDownOpen(
+                                          isDropDownOpen == subsection.id
+                                            ? "nothing"
+                                            : subsection.id
+                                        );
+                                        setSectionId(
+                                          sectionId == val.id ? "" : val.id
+                                        );
+                                        setSubSectionId(
+                                          subSectionId == subsection.id
+                                            ? ""
+                                            : subsection.id
+                                        );
                                       }}
-                                      className="relative z-10 block p-2 text-gray-700 bg-white border border-transparent rounded-md dark:text-white dark:bg-gray-800 focus:outline-none"
+                                      className="relative z-10 block p-2 text-gray-700 bg-white border border-transparent rounded-md focus:outline-none hover:bg-slate-100"
                                     >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-5 h-5"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                      >
-                                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                                      </svg>
+                                      <BiDotsVertical />
                                     </button>
                                     {isDropDownOpen == subsection.id && (
-                                      <div className="absolute left-0 z-20 w-28 py-2 pt-4 origin-top-left bg-white rounded-md shadow-xl dark:bg-gray-800">
+                                      <div className="absolute left-0 z-20 w-28 py-2 pt-4 origin-top-left bg-white rounded-md shadow-xl ">
                                         <p
                                           onClick={() => {
                                             setIsSubSectionEditOpen(true);
                                             setSubSection(subsection);
+                                            setIsDropDownOpen("");
                                           }}
-                                          className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                                          className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "
                                         >
                                           Edit
                                         </p>
@@ -295,20 +293,11 @@ const SurveyDetail = () => {
                                           onClick={() => {
                                             setIsSubSectionDeleteOpen(true);
                                             setSubSectionId(subsection.id);
+                                            setIsDropDownOpen("");
                                           }}
-                                          className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+                                          className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "
                                         >
                                           Delete
-                                        </p>
-
-                                        <hr />
-                                        <p
-                                          onClick={() =>
-                                            setIsDropDownOpen("nothing")
-                                          }
-                                          className="block cursor-pointer px-4 py-2 mt-1 text-sm text-gray-600 capitalize transition-colors duration-300 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
-                                        >
-                                          Close
                                         </p>
                                       </div>
                                     )}
