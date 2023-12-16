@@ -4,8 +4,9 @@ import Header from "../../components/header";
 import {
   deleteQuestion,
   getQuestionsBySectionId,
+  getQuestionsBySubsectionId,
 } from "../../helpers/questions";
-import { getSectionById } from "../../helpers/sections";
+import { getSectionById, getSubsectionById } from "../../helpers/sections";
 import Button from "../../components/ui/Button";
 import { MdDelete, MdEdit } from "react-icons/md";
 import Modal from "../../components/ui/Modal";
@@ -25,54 +26,24 @@ const SectionDetail = () => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isCreateRecoOpen, setIsCreateRecoOpen] = useState(false);
-  const [isEditRecoOpen, setIsEditRecoOpen] = useState(false);
-  const [recommendations, setRecommendations] =
-    useState<Recommendation | null>();
-
+  
   const pathname = window.location.pathname;
   const surveyId = pathname.split("/")[3];
   const sectionId = pathname.split("/")[4];
-
+  const subsectionId = pathname.split("/")[5];
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      await getSectionById(surveyId, sectionId, setSection);
-      getQuestionsBySectionId(surveyId, sectionId, setQuestions, setIsLoading);
+      await getSubsectionById(surveyId, sectionId,subsectionId, setSection);
+      getQuestionsBySubsectionId(surveyId, sectionId, subsectionId,setQuestions, setIsLoading);
     };
     fetchData();
-  }, [surveyId, sectionId]);
+  }, [surveyId, sectionId,subsectionId]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const db = getFirestore();
-        const surveyDocRef = doc(collection(db, "surveys"), surveyId);
-        const sectionDocRef = doc(surveyDocRef, "sections", sectionId);
-        const recommendationsCollectionRef = collection(
-          sectionDocRef,
-          "recommendations"
-        );
-
-        const querySnapshot = await getDocs(recommendationsCollectionRef);
-
-        const recommendationsData = querySnapshot.docs.map((doc) => {
-          return { id: doc.id, ...doc.data() } as Recommendation;
-        });
-
-        setRecommendations(recommendationsData[0]);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setRecommendations(null);
-      }
-    };
-
-    fetchData();
-  }, [surveyId, sectionId]);
 
   const handelClick = () => {
     if (!sectionId) return;
-    deleteQuestion(surveyId, sectionId, questionId!);
+    deleteQuestion(surveyId, sectionId,subsectionId, questionId!);
     setIsDeleteOpen(false);
     setQuestionId("");
   };
@@ -84,19 +55,6 @@ const SectionDetail = () => {
         <h2 className="text-2xl text-primary font-semibold my-4 capitalize">
           {section?.title}
         </h2>
-        <div className="flex justify-center items-center">
-          <Button
-            className="bg-primary text-sm text-white h-8 md:px-3 px-3 me-3"
-            onClick={() => {
-              if (recommendations) {
-                setIsEditRecoOpen(true);
-              } else {
-                setIsCreateRecoOpen(true);
-              }
-            }}
-          >
-            {recommendations ? "Edit Recommendation" : "Create Recommendation"}
-          </Button>
           <Button
             className="bg-primary text-sm text-white w-[152px] h-8 md:px-3 px-3"
             onClick={() => setIsOpen(true)}
@@ -104,7 +62,6 @@ const SectionDetail = () => {
             Create Question
           </Button>
         </div>
-      </div>
       {!isLoading &&
         questions?.map((val: Question, index) => {
           return (
@@ -155,6 +112,7 @@ const SectionDetail = () => {
         <CreateQuestion
           surveyId={surveyId}
           sectionId={sectionId}
+          subsectionId={subsectionId}
           setIsOpen={setIsOpen}
         />
       </Modal>
@@ -166,6 +124,7 @@ const SectionDetail = () => {
         <EditQuestion
           surveyId={surveyId}
           sectionId={sectionId}
+          subsectionId={subsectionId}
           setIsOpen={setIsEditOpen}
           question={question!}
         />
@@ -183,31 +142,6 @@ const SectionDetail = () => {
           }}
         />
       </Modal>
-      <Modal
-        isOpen={isCreateRecoOpen}
-        title="Create Recommendation"
-        onChange={() => setIsCreateRecoOpen(false)}
-      >
-        <CreateRecommendation
-          surveyId={surveyId}
-          sectionId={sectionId}
-          setIsCreateOpen={setIsCreateRecoOpen}
-        />
-      </Modal>
-      {recommendations && (
-        <Modal
-          isOpen={isEditRecoOpen}
-          title="Edit Recommendation"
-          onChange={() => setIsEditRecoOpen(false)}
-        >
-          <EditRecommendation
-            surveyId={surveyId}
-            sectionId={sectionId}
-            setIsOpen={setIsEditRecoOpen}
-            recommendation={recommendations}
-          />
-        </Modal>
-      )}
     </div>
   );
 };

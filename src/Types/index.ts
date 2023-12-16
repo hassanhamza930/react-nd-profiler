@@ -32,6 +32,11 @@ export interface Section {
   title: string;
 }
 
+export interface Subsection {
+  id: string;
+  title: string;
+}
+
 export interface Options {
   id?: string;
   option1: string;
@@ -43,6 +48,7 @@ export interface Options {
 export interface Question {
   id?: string;
   sectionId?: string;
+  subsectionId?:string;
   text: string;
   options: Options;
   timestamp?: Timestamp;
@@ -53,6 +59,7 @@ export interface Response {
   response: string;
   option: string;
   sectionId: string;
+  subsectionId:string;
   surveyId: string;
   questionId: string;
 }

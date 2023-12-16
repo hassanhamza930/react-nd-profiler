@@ -37,7 +37,7 @@ function App() {
             <Route path="/dashboard/question/:id" element={<QuestionPage />} />
             <Route path="/dashboard/result/:id" element={<Result />} />
             <Route
-              path="/dashboard/section/:surveyId/:sectionId"
+              path="/dashboard/section/:surveyId/:sectionId/:subsectionId"
               element={<SectionDetail />}
             />
             <Route path="/dashboard/survey/:id" element={<SurveyDetail />} />

@@ -57,6 +57,7 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
       addResponse(
         localStorage.getItem("uid")!,
         currentQuestion!.sectionId!,
+        currentQuestion.subsectionId,
         currentQuestion!.id!,
         surveyId,
         answer,

@@ -15,6 +15,50 @@ import {
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
+// export const getQuestionsById = async (surveyId: string) => {
+//   try {
+//     const surveyCollection = doc(db, "surveys", surveyId);
+
+//     const sectionsSnapshot = await getDocs(
+//       collection(surveyCollection, "sections")
+//     );
+
+//     let questionArray: Array<Question> = [];
+
+//     for (const sectionDoc of sectionsSnapshot.docs) {
+//       const sectionId = sectionDoc.id;
+
+//       const questionsSnapshot = await getDocs(
+//         collection(sectionDoc.ref, "questions")
+//       );
+
+//       for (const questionDoc of questionsSnapshot.docs) {
+//         const optionsSnapshot = await getDocs(
+//           collection(questionDoc.ref, "options")
+//         );
+//         optionsSnapshot.forEach((optionDoc) => {
+//           const question = {
+//             id: questionDoc.id,
+//             text: questionDoc.data().text,
+//             sectionId: sectionId,
+//             options: {
+//               id: optionDoc.id,
+//               option1: optionDoc.data().option1,
+//               option2: optionDoc.data().option2,
+//               option3: optionDoc.data().option3,
+//               option4: optionDoc.data().option4,
+//             },
+//           };
+//           questionArray.push(question);
+//         });
+//       }
+//     }
+//     return questionArray;
+//   } catch (error) {
+//     console.error("Error fetching questions:", error);
+//   }
+// };
+
 export const getQuestionsById = async (surveyId: string) => {
   try {
     const surveyCollection = doc(db, "surveys", surveyId);
@@ -23,34 +67,44 @@ export const getQuestionsById = async (surveyId: string) => {
       collection(surveyCollection, "sections")
     );
 
-    let questionArray: Array<Question> = [];
+    const questionArray: Array<Question> = [];
 
     for (const sectionDoc of sectionsSnapshot.docs) {
       const sectionId = sectionDoc.id;
 
-      const questionsSnapshot = await getDocs(
-        collection(sectionDoc.ref, "questions")
+      const subsectionsSnapshot = await getDocs(
+        collection(sectionDoc.ref, "subsections")
       );
 
-      for (const questionDoc of questionsSnapshot.docs) {
-        const optionsSnapshot = await getDocs(
-          collection(questionDoc.ref, "options")
+      for (const subsectionDoc of subsectionsSnapshot.docs) {
+        const subsectionId = subsectionDoc.id;
+
+        const questionsSnapshot = await getDocs(
+          collection(subsectionDoc.ref, "questions")
         );
-        optionsSnapshot.forEach((optionDoc) => {
-          const question = {
-            id: questionDoc.id,
-            text: questionDoc.data().text,
-            sectionId: sectionId,
-            options: {
-              id: optionDoc.id,
-              option1: optionDoc.data().option1,
-              option2: optionDoc.data().option2,
-              option3: optionDoc.data().option3,
-              option4: optionDoc.data().option4,
-            },
-          };
-          questionArray.push(question);
-        });
+
+        for (const questionDoc of questionsSnapshot.docs) {
+          const optionsSnapshot = await getDocs(
+            collection(questionDoc.ref, "options")
+          );
+
+          optionsSnapshot.forEach((optionDoc) => {
+            const question = {
+              id: questionDoc.id,
+              text: questionDoc.data().text,
+              sectionId: sectionId,
+              subsectionId: subsectionId,
+              options: {
+                id: optionDoc.id,
+                option1: optionDoc.data().option1,
+                option2: optionDoc.data().option2,
+                option3: optionDoc.data().option3,
+                option4: optionDoc.data().option4,
+              },
+            };
+            questionArray.push(question);
+          });
+        }
       }
     }
     return questionArray;
@@ -59,16 +113,25 @@ export const getQuestionsById = async (surveyId: string) => {
   }
 };
 
-export const getQuestionsBySectionId = (
+export const getQuestionsBySubsectionId = (
   surveyId: string,
   sectionId: string,
+  subsectionId: string,
   setQuestions: (data: Question[]) => void,
   setIsLoading: (args: boolean) => void
 ) => {
   try {
-    const surveyRef = doc(db, "surveys", surveyId);
-    const sectionRef = collection(surveyRef, "sections");
-    const questionsCollection = collection(sectionRef, sectionId, "questions");
+    const subsectionRef = doc(
+      db,
+      "surveys",
+      surveyId,
+      "sections",
+      sectionId,
+      "subsections",
+      subsectionId
+    );
+
+    const questionsCollection = collection(subsectionRef, "questions");
 
     const questionsQuery = query(
       questionsCollection,
@@ -118,6 +181,7 @@ export const getQuestionsBySectionId = (
 export const editQuestion = async (
   surveyId: string,
   sectionId: string,
+  subsectionId: string,
   questionId: string,
   questionData: Partial<Question>,
   optionsData: Options,
@@ -130,6 +194,8 @@ export const editQuestion = async (
       surveyId,
       "sections",
       sectionId,
+      "subsections",
+      subsectionId,
       "questions",
       questionId
     );
@@ -155,6 +221,7 @@ export const editQuestion = async (
 export const createQuestion = async (
   surveyId: string,
   sectionId: string,
+  subsectionId: string,
   setIsOpen: (args: boolean) => void,
   setIsLoading: (args: boolean) => void,
   data: Partial<Question>
@@ -162,8 +229,12 @@ export const createQuestion = async (
   try {
     const surveyCollection = doc(db, "surveys", surveyId);
     const sectionsCollection = collection(surveyCollection, "sections");
-    const questionsCollection = collection(
+    const subsectionsCollection = collection(
       doc(sectionsCollection, sectionId),
+      "subsections"
+    );
+    const questionsCollection = collection(
+      doc(subsectionsCollection, subsectionId),
       "questions"
     );
     const newQuestionRef = await addDoc(questionsCollection, {
@@ -185,6 +256,7 @@ export const createQuestion = async (
 export const deleteQuestion = async (
   surveyId: string,
   sectionId: string,
+  subsectionId: string,
   questionId: string
 ) => {
   try {
@@ -194,6 +266,8 @@ export const deleteQuestion = async (
       surveyId,
       "sections",
       sectionId,
+      "subsections",
+      subsectionId,
       "questions",
       questionId
     );
@@ -203,3 +277,4 @@ export const deleteQuestion = async (
     console.error("Error deleting question:", error);
   }
 };
+

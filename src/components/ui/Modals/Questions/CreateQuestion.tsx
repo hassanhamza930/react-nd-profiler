@@ -8,12 +8,14 @@ import { createQuestion } from "../../../../helpers/questions";
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   surveyId: string;
   sectionId: string;
+  subsectionId:string;
   setIsOpen: (args: boolean) => void;
 }
 
 const CreateQuestion: React.FC<Props> = ({
   surveyId,
   sectionId,
+  subsectionId,
   setIsOpen,
 }) => {
   const [text, setText] = useState<string>("");
@@ -45,7 +47,7 @@ const CreateQuestion: React.FC<Props> = ({
     } else if (!option4) {
       return toast.error("option4 is not selected");
     } else {
-      createQuestion(surveyId, sectionId, setIsOpen, setIsLoading, data!);
+      createQuestion(surveyId, sectionId,subsectionId, setIsOpen, setIsLoading, data!);
       setIsOpen(false);
     }
   };

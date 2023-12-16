@@ -1,4 +1,4 @@
-;
+
 import React, { useState } from "react";
 import Input from "../../Input";
 import Button from "../../Button";
@@ -8,6 +8,7 @@ import { Question } from "../../../../Types";
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   surveyId: string;
   sectionId: string;
+  subsectionId:string;
   setIsOpen: (args: boolean) => void;
   question: Question;
 }
@@ -15,6 +16,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const EditQuestion: React.FC<Props> = ({
   surveyId,
   sectionId,
+  subsectionId,
   setIsOpen,
   question,
 }) => {
@@ -37,7 +39,7 @@ const EditQuestion: React.FC<Props> = ({
       option3,
       option4,
     }
-    editQuestion(surveyId, sectionId, question?.id!, questionData,optionData,setIsLoading);
+    editQuestion(surveyId, sectionId, subsectionId,question?.id!, questionData,optionData,setIsLoading);
     setIsOpen(false);
   };
 

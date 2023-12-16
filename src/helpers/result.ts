@@ -25,6 +25,7 @@ import { ClassifiedData, RecommendationData, Response } from "../Types/index";
 export const addResponse = async (
   userId: string,
   sectionId: string,
+  subsectionId: string,
   questionId: string,
   surveyId: string,
   response: string,
@@ -49,6 +50,7 @@ export const addResponse = async (
     const newResultDocRef = doc(resultsCollectionRef);
     await setDoc(newResultDocRef, {
       sectionId,
+      subsectionId,
       questionId,
       surveyId,
       response,
@@ -86,6 +88,7 @@ export const getResultsData = (
           response: doc.data().response,
           option: doc.data().option,
           sectionId: doc.data().sectionId,
+          subsectionId:doc.data().subsectionId,
           surveyId: doc.data().surveyId,
           questionId: doc.data().questionId,
         }));
@@ -128,6 +131,7 @@ const getTotalQuestionsInSection = (
  * @param setResults
  * @returns
  */
+
 export const getResults = async (
   userId: string,
   surveyId: string,
@@ -145,33 +149,50 @@ export const getResults = async (
       response: doc.data().response,
       option: doc.data().option,
       sectionId: doc.data().sectionId,
+      subsectionId: doc.data().subsectionId,
       surveyId: doc.data().surveyId,
       questionId: doc.data().questionId,
     }));
 
     const sectionSet = new Set();
+    const subsectionSet = new Set();
 
     const classifiedData = resultsData.reduce(
       (acc: ClassifiedData, result: Response) => {
-        const { sectionId, questionId, option } = result;
+        const { sectionId, subsectionId, questionId, option } = result;
         sectionSet.add(sectionId);
+        subsectionSet.add(subsectionId);
 
-        if (!acc[sectionId]) {
-          acc[sectionId] = {
+        const sectionKey = `${sectionId}`;
+
+        if (!acc[sectionKey]) {
+          acc[sectionKey] = {
             totalQuestions: 0,
             totalMarks: 100 / sectionSet.size,
+            obtainedMarks: 0,
+            responses: [],
+            subsections: {},
+          };
+        }
+
+        if (!acc[sectionKey].subsections[subsectionId]) {
+          acc[sectionKey].subsections[subsectionId] = {
+            totalQuestions: 0,
+            totalMarks: acc[sectionKey].totalMarks / subsectionSet.size,
             obtainedMarks: 0,
             responses: [],
           };
         }
 
-        const totalQuestions = getTotalQuestionsInSection(
-          sectionId,
+        const totalQuestionsInSection = getTotalQuestionsInSection(
+          sectionKey,
           resultsData
         );
 
         const questionWeight =
-          totalQuestions > 0 ? acc[sectionId].totalMarks / totalQuestions : 0;
+          totalQuestionsInSection > 0
+            ? acc[sectionKey].totalMarks / totalQuestionsInSection
+            : 0;
 
         let optionWeight;
         switch (option) {
@@ -192,26 +213,51 @@ export const getResults = async (
         }
 
         const questionMarks = questionWeight * optionWeight;
-        acc[sectionId].obtainedMarks += questionMarks;
+        acc[sectionKey].obtainedMarks += questionMarks;
+        acc[sectionKey].totalQuestions++;
 
-        acc[sectionId].responses.push({
+        acc[sectionKey].responses.push({
           questionId,
           option,
           questionMarks,
         });
+
+        acc[sectionKey].subsections[subsectionId].obtainedMarks += questionMarks;
+        acc[sectionKey].subsections[subsectionId].totalQuestions++;
+
+        acc[sectionKey].subsections[subsectionId].responses.push({
+          questionId,
+          option,
+          questionMarks,
+        });
+
         return acc;
       },
       {}
     );
 
     const resultArray = Object.entries(classifiedData).map(
-      ([sectionId, data]) => ({
-        sectionId,
-        totalMarks: data.totalMarks,
-        obtainedMarks: data.obtainedMarks,
-        percentage: (data.obtainedMarks / data.totalMarks) * 100,
-      })
+      ([sectionKey, data]) => {
+        const [sectionId] = sectionKey.split("-");
+        const subsectionsArray = Object.entries(data.subsections).map(
+          ([subId, subData]) => ({
+            title: subId, // Assuming you have a way to get the title for a subsection
+            total: subData.totalMarks,
+            obtained: subData.obtainedMarks,
+            percentage: (subData.obtainedMarks / subData.totalMarks) * 100,
+          })
+        );
+
+        return {
+          sectionId,
+          totalMarks: data.totalMarks,
+          obtainedMarks: data.obtainedMarks,
+          percentage: (data.obtainedMarks / data.totalMarks) * 100,
+          subsections: subsectionsArray,
+        };
+      }
     );
+    console.log(resultArray)
     setResults(resultArray);
     return resultArray;
   } catch (error) {
@@ -219,6 +265,7 @@ export const getResults = async (
     return [];
   }
 };
+
 
 /**
  *
