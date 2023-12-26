@@ -46,22 +46,20 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
   };
 
   return loading ? (
-    <div className="bg-gray-300 text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between animate-pulse"></div>
+    <div className="relative bg-gray-300 text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between animate-pulse"></div>
   ) : (
     <>
       {role !== "admin" ? (
         questions &&
         questions?.length > 0 && (
           <div
-            // className={`${
-            //   results?.length == questions?.length
-            //     ? "bg-gradient-to-r from-[#FB8B24]  to-[#E36414]"
-            //     : "bg-gradient-to-r from-yellow-500  to-yellow-300"
-            // } text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between shadow-lg`}
-            className="gradient_overlay"
+            className="relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end mt-5 rounded-xl w-[300px] h-[235px] text-white font-medium flex flex-col justify-between items-start overflow-hidden"
           >
-            <div>
-              {/* {role !== "admin" && (
+
+            <div className="absolute z-10 bg-blue-600/50 backdrop-blur-lg h-full w-full"></div>
+            <div className="relative h-full w-full z-20 flex-col flex justify-between items-start p-5 ">
+              <div>
+                {/* {role !== "admin" && (
                 <div className="h-1 w-full bg-black rounded-full mb-3">
                   <div
                     className="h-1 bg-white rounded-full"
@@ -69,81 +67,80 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                   ></div>
                 </div>
               )} */}
-              <Link
-                to={`/dashboard/survey/${survey.id}`}
-                className="text-3xl font-bold cursor-pointer uppercase"
+                <Link
+                  to={`/dashboard/survey/${survey.id}`}
+                  className="text-3xl font-medium cursor-pointer uppercase"
+                >
+                  {survey?.title}
+                </Link>
+                <p className="text-[12px] my-3 normal-case">{survey?.tagline}</p>
+                {role == "admin" ? (
+                  <p className="text-[12px]">
+                    {questions && questions?.length} questions
+                  </p>
+                ) : (
+                  <p className="text-[12px]">
+                    Completed {results && results?.length} questions
+                  </p>
+                )}
+              </div>
+              <div className="flex justify-end mb-3">
+                {results && results?.length == questions?.length ? (
+                  <Button
+                    className={`bg-white text-[14px] p-4 whitespace-nowrap ${results?.length == questions?.length
+                      ? "text-[#331621cc]"
+                      : "text-primary"
+                      } w-[104px] h-[24px]`}
+                    onClick={() => navigate(`/dashboard/result/${survey.id}`)}
+                  >
+                    Results
+                  </Button>
+                ) : results &&
+                  results?.length !== 0 &&
+                  results?.length < questions?.length ? (
+                  <Button
+                    className={`bg-white text-[14px] p-4 whitespace-nowrap ${results?.length == questions?.length
+                      ? "text-[#EE2F7BCC]"
+                      : "text-primary"
+                      } w-[104px] h-[24px]`}
+                    onClick={() => navigate(`/dashboard/question/${survey.id}`)}
+                  >
+                    Resume
+                  </Button>
+                ) : (
+                  <Button
+                    className={`bg-white text-sm p-4 whitespace-nowrap font-regular ${results?.length == questions?.length
+                      ? "text-[#EE2F7BCC]"
+                      : "text-blue-600"
+                      } w-[104px] h-[24px]`}
+                    onClick={() => navigate(`/dashboard/question/${survey.id}`)}
+                  >
+                    Start
+                  </Button>
+                )}
+              </div>
+              <Modal
+                isOpen={isOpen}
+                title="Edit Survey"
+                onChange={() => setIsOpen(false)}
               >
-                {survey?.title}
-              </Link>
-              <p className="text-[12px] my-3 normal-case">{survey?.tagline}</p>
-              {role == "admin" ? (
-                <p className="text-[12px]">
-                  {questions && questions?.length} questions
-                </p>
-              ) : (
-                <p className="text-[12px]">
-                  Completed {results && results?.length} questions
-                </p>
-              )}
+                <EditSurvey
+                  survey={survey}
+                  handleClose={() => setIsOpen(false)}
+                />
+              </Modal>
+              <Modal
+                isOpen={isDeleteOpen}
+                title="Delete Survey"
+                onChange={() => setIsDeleteOpen(false)}
+              >
+                <DeleteSurvey
+                  handelClick={handelClick}
+                  handleClose={() => setIsDeleteOpen(false)}
+                />
+              </Modal>
             </div>
-            <div className="flex justify-end mb-3">
-              {results && results?.length == questions?.length ? (
-                <Button
-                  className={`bg-white text-[14px] p-4 whitespace-nowrap ${
-                    results?.length == questions?.length
-                      ? "text-[#EE2F7BCC]"
-                      : "text-primary"
-                  } w-[104px] h-[24px]`}
-                  onClick={() => navigate(`/dashboard/result/${survey.id}`)}
-                >
-                  Results
-                </Button>
-              ) : results &&
-                results?.length !== 0 &&
-                results?.length < questions?.length ? (
-                <Button
-                  className={`bg-white text-[14px] p-4 whitespace-nowrap ${
-                    results?.length == questions?.length
-                      ? "text-[#EE2F7BCC]"
-                      : "text-primary"
-                  } w-[104px] h-[24px]`}
-                  onClick={() => navigate(`/dashboard/question/${survey.id}`)}
-                >
-                  Resume
-                </Button>
-              ) : (
-                <Button
-                  className={`bg-white text-[14px] p-4 whitespace-nowrap ${
-                    results?.length == questions?.length
-                      ? "text-[#EE2F7BCC]"
-                      : "text-primary"
-                  } w-[104px] h-[24px]`}
-                  onClick={() => navigate(`/dashboard/question/${survey.id}`)}
-                >
-                  Start
-                </Button>
-              )}
-            </div>
-            <Modal
-              isOpen={isOpen}
-              title="Edit Survey"
-              onChange={() => setIsOpen(false)}
-            >
-              <EditSurvey
-                survey={survey}
-                handleClose={() => setIsOpen(false)}
-              />
-            </Modal>
-            <Modal
-              isOpen={isDeleteOpen}
-              title="Delete Survey"
-              onChange={() => setIsDeleteOpen(false)}
-            >
-              <DeleteSurvey
-                handelClick={handelClick}
-                handleClose={() => setIsDeleteOpen(false)}
-              />
-            </Modal>
+
           </div>
         )
       ) : (

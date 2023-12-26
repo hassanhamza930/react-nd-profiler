@@ -19,7 +19,7 @@ const SidebarItem: React.FC<SidebarItemProps> = (props) => {
           pathname?.toLowerCase().includes(props?.route?.toLowerCase().split("/")[1]) == true
             ? "bg-[#7360DF] text-white"
             : "text-white"
-        } px-5 py-2 text-base font-semibold gap-6`}
+        } px-5 py-2 text-base font-regular gap-6`}
       >
         <props.icon size={props.iconSize}/>
         <div>{props.name}</div>

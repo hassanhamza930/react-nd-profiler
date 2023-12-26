@@ -14,7 +14,8 @@ function App() {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const role = localStorage.getItem("role");
   return (
-    <BrowserRouter>
+    <div style={{fontFamily:"Rubik"}}>
+      <BrowserRouter>
       <Routes>
         {isLoggedIn !== "true" ? (
           <Route>
@@ -48,6 +49,7 @@ function App() {
         <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>
+    </div>
   );
 }
 

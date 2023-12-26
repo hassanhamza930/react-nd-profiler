@@ -45,12 +45,8 @@ const Sidebar: React.FC<Props> = ({ children }) => {
           <div className="my-16 w-full">
             <img
               src="/assets/images/logo.svg"
-              width={57}
-              height={72}
               alt="logo"
-              style={{
-                mixBlendMode: "screen",
-              }}
+              className="h-24 w-24 mix-blend-lighten invert"
             />
           </div>
 
@@ -65,10 +61,10 @@ const Sidebar: React.FC<Props> = ({ children }) => {
           <div className="bg-[#F0811080] h-[1px] my-2"></div>
           <button
             onClick={() => handleLogout(navigate)}
-            className={`flex flex-row justify-start items-center w-full hover:scale-105 transition-all duration-300 rounded-lg text-white px-5 py-2 text-base font-semibold gap-6`}
+            className={`flex flex-row justify-start items-center w-full hover:scale-105 transition-all duration-300 rounded-lg text-white px-5 py-2 text-base gap-5`}
           >
             <TbLogout2 size={22} />
-            <div>Logout</div>
+            <div className="font-regular">Logout</div>
           </button>
         </div>
       </div>
