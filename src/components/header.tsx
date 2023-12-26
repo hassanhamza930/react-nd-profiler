@@ -6,7 +6,7 @@ export default function Header({ heading }: { heading: string }) {
       <div className="flex flex-row gap-2 justify-start items-center overflow-hidden">
         <h1 className="text-md md:text-2xl font-medium">{heading}</h1>
       </div>
-      <div className="flex flex-row justify-end items-center gap-6">
+      {/* <div className="flex flex-row justify-end items-center gap-6">
         <div className="relative">
           <MdOutlineMail size={27} />
           <div className="absolute bg-primary text-[10px] text-white rounded-full px-2 top-[-6px] right-[-6px] py-[3px]">
@@ -20,7 +20,7 @@ export default function Header({ heading }: { heading: string }) {
           height={36}
           className="h-[30px] w-[30px] md:h-[40px] md:w-[40px] object-cover object-center rounded-full"
         />
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -53,11 +53,12 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
         questions &&
         questions?.length > 0 && (
           <div
-            className={`${
-              results?.length == questions?.length
-                ? "bg-[#EE2F7BCC]"
-                : "bg-primary"
-            } text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between`}
+            // className={`${
+            //   results?.length == questions?.length
+            //     ? "bg-gradient-to-r from-[#FB8B24]  to-[#E36414]"
+            //     : "bg-gradient-to-r from-yellow-500  to-yellow-300"
+            // } text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between shadow-lg`}
+            className="gradient_overlay"
           >
             <div>
               {/* {role !== "admin" && (
@@ -70,11 +71,11 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
               )} */}
               <Link
                 to={`/dashboard/survey/${survey.id}`}
-                className="text-3xl font-bold cursor-pointer"
+                className="text-3xl font-bold cursor-pointer uppercase"
               >
                 {survey?.title}
               </Link>
-              <p className="text-[10px] my-3">{survey?.tagline}</p>
+              <p className="text-[12px] my-3 normal-case">{survey?.tagline}</p>
               {role == "admin" ? (
                 <p className="text-[12px]">
                   {questions && questions?.length} questions
@@ -88,7 +89,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
             <div className="flex justify-end mb-3">
               {results && results?.length == questions?.length ? (
                 <Button
-                  className={`bg-white text-[10px] ${
+                  className={`bg-white text-[14px] p-4 whitespace-nowrap ${
                     results?.length == questions?.length
                       ? "text-[#EE2F7BCC]"
                       : "text-primary"
@@ -101,7 +102,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                 results?.length !== 0 &&
                 results?.length < questions?.length ? (
                 <Button
-                  className={`bg-white text-[10px] ${
+                  className={`bg-white text-[14px] p-4 whitespace-nowrap ${
                     results?.length == questions?.length
                       ? "text-[#EE2F7BCC]"
                       : "text-primary"
@@ -112,7 +113,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                 </Button>
               ) : (
                 <Button
-                  className={`bg-white text-[10px] ${
+                  className={`bg-white text-[14px] p-4 whitespace-nowrap ${
                     results?.length == questions?.length
                       ? "text-[#EE2F7BCC]"
                       : "text-primary"
@@ -147,7 +148,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
         )
       ) : (
         <div
-          className={`bg-primary text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between`}
+          className={`bg-gradient-to-r from-yellow-300  to-yellow-500 text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between shadow-lg`}
         >
           <div>
             {role !== "admin" && (
@@ -160,7 +161,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
             )}
             <Link
               to={`/dashboard/survey/${survey.id}`}
-              className="text-3xl font-bold cursor-pointer"
+              className="text-3xl font-bold cursor-pointer uppercase"
             >
               {survey?.title}
             </Link>
@@ -179,7 +180,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
           <div className="flex justify-end mb-3">
             <div className="flex">
               <Button
-                className={`bg-white px-4 md:px-3 text-[10px] text-primary w-[60px] h-[24px]`}
+                className={`bg-white p-4 md:p-4 text-[14px] text-primary w-[60px] h-[24px] whitespace-nowrap`}
                 onClick={() => {
                   setIsOpen(true);
                 }}
@@ -187,7 +188,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                 Edit
               </Button>
               <Button
-                className={`bg-white px-4 md:px-3 ms-3 text-[10px] text-primary w-[60px] h-[24px]`}
+                className={`bg-white p-4 md:p-4 ms-3 text-[14px] text-primary w-[60px] h-[24px] whitespace-nowrap`}
                 onClick={() => {
                   setIsDeleteOpen(true);
                 }}

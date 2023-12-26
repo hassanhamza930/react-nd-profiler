@@ -17,8 +17,8 @@ const SidebarItem: React.FC<SidebarItemProps> = (props) => {
         to={props.route}
         className={`flex flex-row justify-start items-center w-full hover:scale-105 transition-all duration-300 rounded-lg ${
           pathname?.toLowerCase().includes(props?.route?.toLowerCase().split("/")[1]) == true
-            ? "bg-primary text-white"
-            : "text-black"
+            ? "bg-[#7360DF] text-white"
+            : "text-white"
         } px-5 py-2 text-base font-semibold gap-6`}
       >
         <props.icon size={props.iconSize}/>

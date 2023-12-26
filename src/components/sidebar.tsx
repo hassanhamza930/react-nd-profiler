@@ -40,7 +40,7 @@ const Sidebar: React.FC<Props> = ({ children }) => {
 
   return pathname.includes("auth") == false ? (
     <div className={twMerge(`flex h-screen`)}>
-      <div className="hidden md:flex bg-[#FFF5D680] h-screen w-[294px]">
+      <div className="hidden md:flex bg-[#33186B] h-screen w-[294px]">
         <div className="flex flex-col justify-start center px-8 gap-2 w-full">
           <div className="my-16 w-full">
             <img
@@ -49,7 +49,7 @@ const Sidebar: React.FC<Props> = ({ children }) => {
               height={72}
               alt="logo"
               style={{
-                mixBlendMode: "multiply",
+                mixBlendMode: "screen",
               }}
             />
           </div>
@@ -65,7 +65,7 @@ const Sidebar: React.FC<Props> = ({ children }) => {
           <div className="bg-[#F0811080] h-[1px] my-2"></div>
           <button
             onClick={() => handleLogout(navigate)}
-            className={`flex flex-row justify-start items-center w-full hover:scale-105 transition-all duration-300 rounded-lg text-black px-5 py-2 text-base font-semibold gap-6`}
+            className={`flex flex-row justify-start items-center w-full hover:scale-105 transition-all duration-300 rounded-lg text-white px-5 py-2 text-base font-semibold gap-6`}
           >
             <TbLogout2 size={22} />
             <div>Logout</div>

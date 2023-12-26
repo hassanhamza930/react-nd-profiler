@@ -66,17 +66,20 @@ const Result = () => {
         className="flex justify-between text-[#3C3C3C] mt-16 mb-20"
         id="result"
       >
-        <div className="w-7/12">
+        <div className="w-7/12" id="graphElement">
           <h2 className="text-3xl font-bold ps-7">Results & Recommendations</h2>
           <p className="text-base mt-5 mb-14 ps-7">{survey?.description}</p>
           <div className="me-28">
             <Chart sections={sections!} data={data} />
           </div>
         </div>
-        <div id="recommendations" className="pe-10">
+        <div id="recommendations" className="bg-transparent">
           {recommendations?.map((val, index) => {
             return (
-              <div className="mb-7 p-5 rounded bg-[#FFF5D680] " key={index}>
+              <div
+                className="mb-7 p-5 rounded-md shadow-lg bg-gradient-to-r from-[#00c6ff]  to-[#0072ff] text-white w-full max-w-[250px]"
+                key={index}
+              >
                 <h2 className="text-2xl font-medium  mb-1 uppercase">
                   {val?.sectionTitle}
                 </h2>
@@ -93,7 +96,11 @@ const Result = () => {
         </div>
       </div>
       <div className="flex gap-7 mb-20 ps-7">
-        <DownloadPdf elementId="result" emailId={user?.email || ""} />
+        <DownloadPdf
+          elementId="recommendations"
+          graphElementId="graphElement"
+          emailId={user?.email || ""}
+        />
         {/* <SendMail elementId="result" /> */}
       </div>
     </div>

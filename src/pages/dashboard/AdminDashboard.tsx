@@ -37,7 +37,7 @@ const AdminDashboard = () => {
         <div className="flex items-center">
           <Dropdown setFilter={setFilter} />
           <Button
-            className="bg-primary text-sm text-white w-[152px] h-8 md:px-3 px-3"
+            className="bg-primary text-sm text-white w-[152px] h-8 md:px-3 px-3 font-normal"
             onClick={() => setIsOpen(true)}
           >
             Create Survey

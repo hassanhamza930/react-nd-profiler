@@ -118,7 +118,7 @@ const SurveyDetail = () => {
           <Header heading="Dashboard" />
           <p className="mt-4">Welcome {role === "admin" ? "Admin" : "User"}!</p>
           <div className="w-7/12">
-            <div className="bg-[#EE2F7BCC] text-white rounded-2xl w-full px-7 py-5 mt-5">
+            <div className="shadow-lg bg-gradient-to-r from-[#E36414]  to-[#FB8B24] text-white rounded-2xl w-full px-7 py-5 mt-5">
               <h2 className="text-[48px] font-bold">{survey?.title}</h2>
               <p className="text-[16px] my-3 mb-8">{survey?.description}</p>
             </div>
