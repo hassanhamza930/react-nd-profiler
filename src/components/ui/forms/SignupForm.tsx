@@ -161,12 +161,12 @@ const SignupForm = () => {
       </div>
       <p className="text-base text-center mt-4 text-lightgray">
         {"Already have an account? "}
-        <Link
+        <button
           className="text-primary font-semibold text-md cursor-pointer"
-          to={"/auth/login"}
+          onClick={() => { navigate("/auth/login") }}
         >
           Login
-        </Link>
+        </button>
       </p>
     </form>
   );

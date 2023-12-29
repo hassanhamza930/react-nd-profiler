@@ -83,12 +83,12 @@ const LoginForm = () => {
       </div>
       <p className="text-base text-center mt-4 text-lightgray">
         Do not have an account?
-        <Link
-          to={"/auth/signup"}
+        <button
+          onClick={()=>{navigate("/auth/signup")}}
           className="text-primary ms-1 font-semibold text-md cursor-pointer"
         >
           Signup
-        </Link>
+        </button>
       </p>
       <Modal
         isOpen={isOpen}

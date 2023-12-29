@@ -58,7 +58,7 @@ export const handleSignUp = async (
         localStorage.setItem("uid", uid);
         localStorage.setItem("isLoggedIn", "true");
         toast.success("Account created successfully");
-        navigate(`/dashboard/${role == "admin" ? "admin" : "user"}`);
+        window.location.href=`/dashboard/${role == "admin" ? "admin" : "user"}`;
         setIsLoading(false);
       })
       .catch((error) => {
@@ -102,7 +102,7 @@ export const handleLogin = async (
             localStorage.setItem("uid", uid);
             localStorage.setItem("isLoggedIn", "true");
 
-            navigate(
+            window.location.href=(
               `/dashboard/${
                 docSnapshot.data().role == "admin" ? "admin" : "user"
               }`
