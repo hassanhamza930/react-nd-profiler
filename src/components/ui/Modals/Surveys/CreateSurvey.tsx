@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import Input from "../../Input";
 import Button from "../../Button";
 import { createSurvey } from "../../../../helpers/surveys";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
+
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   handleClose: () => void;

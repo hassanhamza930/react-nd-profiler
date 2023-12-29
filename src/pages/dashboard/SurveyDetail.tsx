@@ -118,12 +118,19 @@ const SurveyDetail = () => {
           <Header heading="Dashboard" />
           <p className="mt-4">Welcome {role === "admin" ? "Admin" : "User"}!</p>
           <div className="w-7/12">
-            <div className="shadow-lg bg-gradient-to-r from-[#E36414]  to-[#FB8B24] text-white rounded-2xl w-full px-7 py-5 mt-5">
-              <h2 className="text-[48px] font-bold">{survey?.title}</h2>
-              <p className="text-[16px] my-3 mb-8">{survey?.description}</p>
+            <div className="relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end mt-5 rounded-xl text-white font-medium flex flex-col justify-between items-start overflow-hidden">
+              <div className="absolute z-10 bg-blue-600/50 backdrop-blur-lg h-full w-full"></div>
+              <div className="relative h-full w-full z-20 flex-col flex justify-between items-start p-5 ">
+                <h2 className="text-4xl font-normal capitalize">
+                  {survey?.title}
+                </h2>
+                <p className="text-lg font-normal my-3 mb-8">
+                  {survey?.description}
+                </p>
+              </div>
             </div>
             <div className="flex justify-between items-center mt-10">
-              <h2 className="text-3xl text-primary font-bold">
+              <h2 className="text-2xl text-primary font-normal">
                 {role == "admin"
                   ? "All Sections"
                   : `${questions && questions?.length} Questions`}
@@ -177,7 +184,7 @@ const SurveyDetail = () => {
                         {role == "admin" ? (
                           <div>
                             <div className="flex justify-between items-center">
-                              <p className="text-primary capitalize font-semibold my-4 -ms-4 text-lg ">
+                              <p className="text-primary capitalize font-normal my-4 -ms-4 text-lg ">
                                 {val?.title}
                               </p>
                               <div className="relative inline-block">
@@ -252,7 +259,7 @@ const SurveyDetail = () => {
                                   <Link
                                     to={`/dashboard/section/${survey?.id}/${val.id}/${subsection.id}`}
                                   >
-                                    <li className="ms-7 list-item list-disc capitalize font-medium hover:text-slate-500">
+                                    <li className="ms-7 list-item list-disc capitalize font-normal hover:text-slate-500">
                                       {subsection?.title}
                                     </li>
                                   </Link>
@@ -308,12 +315,12 @@ const SurveyDetail = () => {
                           </div>
                         ) : (
                           <div>
-                            <p className="text-primary my-4 -ms-4 text-lg capitalize font-semibold">
+                            <p className="text-primary my-4 -ms-4 text-lg capitalize font-normal">
                               {val?.title}
                             </p>
                             {val?.subsections?.map((subsection) => {
                               return (
-                                <li className="ms-7 list-item list-disc capitalize font-medium">
+                                <li className="ms-7 list-item list-disc capitalize font-normal">
                                   {subsection?.title}
                                 </li>
                               );

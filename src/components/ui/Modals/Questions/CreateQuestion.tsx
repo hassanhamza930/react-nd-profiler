@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import Input from "../../Input";
 import Button from "../../Button";
-import { toast } from "react-hot-toast";
 import { createQuestion } from "../../../../helpers/questions";
+import { toast } from "react-toastify";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   surveyId: string;

@@ -69,17 +69,17 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
               )} */}
                 <Link
                   to={`/dashboard/survey/${survey.id}`}
-                  className="text-3xl font-medium cursor-pointer uppercase"
+                  className="text-2xl font-normal cursor-pointer uppercase"
                 >
                   {survey?.title}
                 </Link>
-                <p className="text-[12px] my-3 normal-case">{survey?.tagline}</p>
+                <p className="text-sm my-3 normal-case font-normal">{survey?.tagline}</p>
                 {role == "admin" ? (
-                  <p className="text-[12px]">
+                  <p className="text-sm font-normal">
                     {questions && questions?.length} questions
                   </p>
                 ) : (
-                  <p className="text-[12px]">
+                  <p className="text-sm font-normal">
                     Completed {results && results?.length} questions
                   </p>
                 )}
@@ -87,9 +87,9 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
               <div className="flex justify-end mb-3">
                 {results && results?.length == questions?.length ? (
                   <Button
-                    className={`bg-white text-[14px] p-4 whitespace-nowrap ${results?.length == questions?.length
-                      ? "text-[#331621cc]"
-                      : "text-primary"
+                    className={`bg-white text-sm font-normal  p-4 whitespace-nowrap ${results?.length == questions?.length
+                      ? "text-blue-600"
+                      : "text-blue-600"
                       } w-[104px] h-[24px]`}
                     onClick={() => navigate(`/dashboard/result/${survey.id}`)}
                   >
@@ -99,9 +99,9 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                   results?.length !== 0 &&
                   results?.length < questions?.length ? (
                   <Button
-                    className={`bg-white text-[14px] p-4 whitespace-nowrap ${results?.length == questions?.length
-                      ? "text-[#EE2F7BCC]"
-                      : "text-primary"
+                    className={`bg-white text-sm p-4 whitespace-nowrap ${results?.length == questions?.length
+                      ? "text-blue-600"
+                      : "text-blue-600"
                       } w-[104px] h-[24px]`}
                     onClick={() => navigate(`/dashboard/question/${survey.id}`)}
                   >
@@ -110,7 +110,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                 ) : (
                   <Button
                     className={`bg-white text-sm p-4 whitespace-nowrap font-regular ${results?.length == questions?.length
-                      ? "text-[#EE2F7BCC]"
+                      ? "text-blue-600"
                       : "text-blue-600"
                       } w-[104px] h-[24px]`}
                     onClick={() => navigate(`/dashboard/question/${survey.id}`)}
@@ -145,8 +145,10 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
         )
       ) : (
         <div
-          className={`bg-gradient-to-r from-yellow-300  to-yellow-500 text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between shadow-lg`}
+          className={`relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end mt-5 rounded-xl w-[300px] h-[235px] text-white font-medium flex flex-col justify-between items-start overflow-hidden`}
         >
+          <div className="absolute z-10 bg-blue-600/50 backdrop-blur-lg h-full w-full"></div>
+            <div className="relative h-full w-full z-20 flex-col flex justify-between items-start p-5 ">
           <div>
             {role !== "admin" && (
               <div className="h-1 w-full bg-black rounded-full mb-3">
@@ -158,17 +160,17 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
             )}
             <Link
               to={`/dashboard/survey/${survey.id}`}
-              className="text-3xl font-bold cursor-pointer uppercase"
+              className="text-2xl font-normal cursor-pointer uppercase"
             >
               {survey?.title}
             </Link>
-            <p className="text-[10px] my-3">{survey?.tagline}</p>
+            <p className="text-sm my-3 font-normal">{survey?.tagline}</p>
             {role == "admin" ? (
-              <p className="text-[12px]">
+              <p className="text-sm font-normal">
                 {questions && questions?.length} questions
               </p>
             ) : (
-              <p className="text-[12px]">
+              <p className="text-sm font-normal">
                 Completed {results && results?.length}/
                 {questions && questions?.length} questions
               </p>
@@ -177,7 +179,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
           <div className="flex justify-end mb-3">
             <div className="flex">
               <Button
-                className={`bg-white p-4 md:p-4 text-[14px] text-primary w-[60px] h-[24px] whitespace-nowrap`}
+                className={`bg-white p-4 md:p-4 text-sm font-normal text-blue-600 w-[60px] h-[24px] whitespace-nowrap`}
                 onClick={() => {
                   setIsOpen(true);
                 }}
@@ -185,7 +187,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                 Edit
               </Button>
               <Button
-                className={`bg-white p-4 md:p-4 ms-3 text-[14px] text-primary w-[60px] h-[24px] whitespace-nowrap`}
+                className={`bg-white p-4 md:p-4 ms-3 text-sm text-blue-600 font-normal w-[60px] h-[24px] whitespace-nowrap`}
                 onClick={() => {
                   setIsDeleteOpen(true);
                 }}
@@ -193,6 +195,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                 Delete
               </Button>
             </div>
+          </div>
           </div>
           <Modal
             isOpen={isOpen}

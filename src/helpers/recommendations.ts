@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { Recommendation, RecommendationData } from "../Types/index";
 import { db } from "../config/firebase";
 import {
@@ -12,7 +13,7 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { toast } from "react-hot-toast";
+
 
 export const getAllRecommendationsData = async (
   setRecommendations: (data: RecommendationData[]) => void

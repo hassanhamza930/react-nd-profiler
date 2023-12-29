@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Button from "../../Button";
-import { toast } from "react-hot-toast";
+
 import { createRecommendation } from "../../../../helpers/recommendations";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { toast } from "react-toastify";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   surveyId: string;

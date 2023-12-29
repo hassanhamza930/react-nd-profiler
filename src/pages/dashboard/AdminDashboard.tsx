@@ -23,6 +23,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!filter) return;
+    console.log("Use Effect Called")
     const fetchData = async () => {
       await getSurveys(filter, setSurveys);
     };

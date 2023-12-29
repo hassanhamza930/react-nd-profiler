@@ -30,11 +30,11 @@ const UserDashboard = () => {
     };
     fetchData();
   }, [filter]);
-
+const isPremium = true;
   return (
     <>
       <Header heading="Dashboard" />
-      <div className="flex justify-between mt-4">
+      {!isPremium ? <div>Please Subsrcibed to Premium to get surveys</div> : <><div className="flex justify-between mt-4">
         <p>Welcome User!</p>
       </div>
       <div className="flex gap-6">
@@ -53,7 +53,8 @@ const UserDashboard = () => {
         onChange={() => setIsOpen(false)}
       >
         <CreateSurvey handleClose={() => setIsOpen(false)} />
-      </Modal>
+      </Modal></>}
+      
     </>
   );
 };

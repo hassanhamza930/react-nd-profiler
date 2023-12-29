@@ -1,5 +1,4 @@
 import React from "react";
-import toast from "react-hot-toast";
 import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -8,6 +7,7 @@ import {
 import { auth, db } from "../config/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { User } from "../Types/index";
+import { toast } from "react-toastify";
 
 export const handleSignUp = async (
   e: React.MouseEvent<HTMLButtonElement, MouseEvent>,

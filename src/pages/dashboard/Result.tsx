@@ -67,29 +67,32 @@ const Result = () => {
         id="result"
       >
         <div className="w-7/12" id="graphElement">
-          <h2 className="text-3xl font-bold ps-7">Results & Recommendations</h2>
-          <p className="text-base mt-5 mb-14 ps-7">{survey?.description}</p>
+          <h2 className="text-3xl font-normal ps-7">Results & Recommendations</h2>
+          <p className="text-sm mt-2 mb-14 ps-7">{survey?.description}</p>
           <div className="me-28">
             <Chart sections={sections!} data={data} />
           </div>
         </div>
-        <div id="recommendations" className="bg-transparent">
+        <div id="recommendations">
           {recommendations?.map((val, index) => {
             return (
               <div
-                className="mb-7 p-5 rounded-md shadow-lg bg-gradient-to-r from-[#00c6ff]  to-[#0072ff] text-white w-full max-w-[250px]"
                 key={index}
+                className="relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end mt-5 rounded-md text-white font-medium flex flex-col justify-between items-start overflow-hidden"
               >
-                <h2 className="text-2xl font-medium  mb-1 uppercase">
-                  {val?.sectionTitle}
-                </h2>
-                <div className="h-[2px] w-full bg-slate-500/10 rounded-full mb-3" />
-                {val?.recommendation !== null && (
-                  <div
-                    className="ms-2"
-                    dangerouslySetInnerHTML={{ __html: val?.recommendation }}
-                  />
-                )}
+                <div className="absolute z-10 bg-blue-600/50 backdrop-blur-lg h-full w-full"></div>
+                <div className="relative h-full w-full z-20 flex-col flex justify-between items-start p-5 ">
+                  <h2 className="text-2xl font-normal  mb-2 uppercase">
+                    {val?.sectionTitle}
+                  </h2>
+                  <div className="h-[2px] w-full bg-[#FFFFFF] rounded-full mb-3" />
+                  {val?.recommendation !== null && (
+                    <div
+                      className="ms-2 font-normal"
+                      dangerouslySetInnerHTML={{ __html: val?.recommendation }}
+                    />
+                  )}
+                </div>
               </div>
             );
           })}
@@ -108,3 +111,19 @@ const Result = () => {
 };
 
 export default Result;
+
+// <div
+//   className="mb-7 p-5 rounded-md shadow-lg bg-gradient-to-r from-[#00c6ff]  to-[#0072ff] text-white w-full max-w-[250px]"
+//   key={index}
+// >
+//   <h2 className="text-2xl font-medium  mb-1 uppercase">
+//     {val?.sectionTitle}
+//   </h2>
+//   <div className="h-[2px] w-full bg-slate-500/10 rounded-full mb-3" />
+//   {val?.recommendation !== null && (
+//     <div
+//       className="ms-2"
+//       dangerouslySetInnerHTML={{ __html: val?.recommendation }}
+//     />
+//   )}
+// </div>

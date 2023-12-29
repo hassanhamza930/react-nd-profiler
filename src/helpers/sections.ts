@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { Section, Subsection } from "../Types/index";
 import { db } from "../config/firebase";
 import {
@@ -9,7 +10,6 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
-import { toast } from "react-hot-toast";
 
 export const getSections = (
   surveyId: string,

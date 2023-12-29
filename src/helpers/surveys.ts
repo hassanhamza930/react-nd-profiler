@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { Survey } from "../Types/index";
 import { db } from "../config/firebase";
 import {
@@ -11,9 +12,36 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { toast } from "react-hot-toast";
+// export const getSurveys = async (
+//   filter: string,
+//   setSurveys: (data: Survey[]) => void
+// ) => {
+//   try {
+//     const q = query(collection(db, "surveys"), where("role", "==", filter));
 
-export const getSurveys = async (filter: string, setSurveys: (data: Survey[]) => void) => {
+//     const querySnapshot = await getDocs(q);
+
+//     const data = querySnapshot.docs.map((doc) => {
+//       const { title, tagline, description, role, status } = doc.data();
+//       return {
+//         id: doc.id,
+//         title,
+//         tagline,
+//         description,
+//         role,
+//         status,
+//       };
+//     });
+
+//     setSurveys(data);
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//   }
+// };
+export const getSurveys = async (
+  filter: string,
+  setSurveys: (data: Survey[]) => void
+) => {
   try {
     const q = query(collection(db, "surveys"), where("role", "==", filter));
 
@@ -35,7 +63,10 @@ export const getSurveys = async (filter: string, setSurveys: (data: Survey[]) =>
   }
 };
 
-export const getSurveyById = async (surveyId: string,setSurveys: (data: Survey) => void) => {
+export const getSurveyById = async (
+  surveyId: string,
+  setSurveys: (data: Survey) => void
+) => {
   try {
     const surveyDoc = await getDoc(doc(db, "surveys", surveyId));
 
@@ -60,41 +91,44 @@ export const getSurveyById = async (surveyId: string,setSurveys: (data: Survey) 
 
 export const createSurvey = async (newSurveyData: Partial<Survey>) => {
   try {
-    const newSurveyRef = await addDoc(collection(db, 'surveys'), newSurveyData);
-    toast.success("Survey created successfully")
+    const newSurveyRef = await addDoc(collection(db, "surveys"), newSurveyData);
+    toast.success("Survey created successfully");
     return newSurveyRef.id;
   } catch (error) {
-    console.error('Error creating survey:', error);
+    console.error("Error creating survey:", error);
   }
 };
 
-export const updateSurvey = async (surveyId: string, updatedData: Partial<Survey>) => {
+export const updateSurvey = async (
+  surveyId: string,
+  updatedData: Partial<Survey>
+) => {
   try {
-    const surveyRef = doc(db, 'surveys', surveyId);
+    const surveyRef = doc(db, "surveys", surveyId);
     const surveyDoc = await getDoc(surveyRef);
 
     if (surveyDoc.exists()) {
       await updateDoc(surveyRef, updatedData);
-      toast.success("Survey updated successfully")
+      toast.success("Survey updated successfully");
     } else {
-      console.error('Survey not found');
+      console.error("Survey not found");
     }
   } catch (error) {
-    console.error('Error updating survey:', error);
+    console.error("Error updating survey:", error);
   }
 };
 
 export const deleteSurvey = async (surveyId: string) => {
   try {
-    const surveyDoc = await getDoc(doc(db, 'surveys', surveyId));
+    const surveyDoc = await getDoc(doc(db, "surveys", surveyId));
 
     if (surveyDoc.exists()) {
-      await deleteDoc(doc(db, 'surveys', surveyId));
+      await deleteDoc(doc(db, "surveys", surveyId));
       toast.success("Survey deleted successfully");
     } else {
-      console.error('Survey not found');
+      console.error("Survey not found");
     }
   } catch (error) {
-    console.error('Error deleting survey:', error);
+    console.error("Error deleting survey:", error);
   }
 };

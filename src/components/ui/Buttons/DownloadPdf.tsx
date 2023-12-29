@@ -22,12 +22,12 @@ const DownloadPdf: React.FC<Props> = ({
 
     const container = document.createElement("div");
 
-    container.style.width = "100%"; 
-   
+    container.style.width = "100%";
+
     const graphElement = document.getElementById(graphElementId);
     if (graphElement) {
       const clonedGraphElement = graphElement.cloneNode(true) as HTMLElement;
-      clonedGraphElement.style.padding = "20px"; 
+      clonedGraphElement.style.padding = "20px";
       container.appendChild(clonedGraphElement);
     }
 
@@ -39,7 +39,7 @@ const DownloadPdf: React.FC<Props> = ({
       const clonedContentElement = contentElement.cloneNode(
         true
       ) as HTMLElement;
-      // clonedContentElement.style.padding = "30px 50px"; 
+      clonedContentElement.style.padding = "30px 50px";
       container.appendChild(clonedContentElement);
     }
 
@@ -80,14 +80,14 @@ const DownloadPdf: React.FC<Props> = ({
   return (
     <div className="flex justify-center items-center gap-x-3">
       <Button
-        className="bg-[#3C3C3C] text-lg font-medium text-white w-[182px] h-[49px]"
+        className="bg-[#3C3C3C] text-md font-normal text-white w-[182px] h-[49px]"
         onClick={handleSendEmail}
         disabled={loading}
       >
         Send Email
       </Button>
       <Button
-        className="bg-[#3C3C3C] text-lg font-medium text-white w-[182px] h-[49px]"
+        className="bg-[#3C3C3C] text-md font-normal text-white w-[182px] h-[49px]"
         onClick={handleClick}
         disabled={downloadLoading}
       >

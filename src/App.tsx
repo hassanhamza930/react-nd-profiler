@@ -9,12 +9,16 @@ import SurveyDetail from "./pages/dashboard/SurveyDetail";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import QuestionPage from "./pages/dashboard/Question";
 import Result from "./pages/dashboard/Result";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
   const role = localStorage.getItem("role");
   return (
+  
     <div style={{fontFamily:"Rubik"}}>
+      <ToastContainer />
       <BrowserRouter>
       <Routes>
         {isLoggedIn !== "true" ? (
@@ -50,6 +54,7 @@ function App() {
       </Routes>
     </BrowserRouter>
     </div>
+   
   );
 }
 

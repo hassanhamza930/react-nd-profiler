@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Button from "../Button";
 import { Question } from "../../../Types";
-import { toast } from "react-hot-toast";
+
 import Modal from "../Modal";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { addResponse } from "../../../helpers/result";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   questions: Array<Question> | undefined;
