@@ -23,10 +23,12 @@ import EditRecommendation from "../../components/ui/Modals/Recommendations/EditR
 import CreateSubSection from "../../components/ui/Modals/Sections copy/CreateSubSection";
 import EditSubSection from "../../components/ui/Modals/Sections copy/EditSubSection";
 import { BiDotsVertical } from "react-icons/bi";
+import { Database } from "../../Types/supabase";
 
 const SurveyDetail = () => {
   const [questions, setQuestions] = useState<Array<Question>>();
-  const [sections, setSections] = useState<Array<Section>>();
+  const [sections, setSections] = useState<Database["public"]["Tables"]["sections"]["Row"]>();
+  const [render,setRender] = useState<boolean>(false)
   const [survey, setSurvey] = useState<Survey>();
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -55,7 +57,10 @@ const SurveyDetail = () => {
     setRole(localStorage.getItem("role")!);
 
     setIsLoading(true);
+    setRender(false);
     getSurveyById(currentUrl, setSurvey);
+
+    
     const uid = localStorage.getItem("uid")!;
     const fetchData = async () => {
       getResultsData(uid, survey!.id, setResults);
@@ -63,10 +68,11 @@ const SurveyDetail = () => {
       setQuestions(await getQuestionsById(currentUrl));
       setIsLoading(false);
     };
+
     fetchData()
       .then(() => console.log("done"))
       .catch((err) => console.log("err", err));
-  }, [currentUrl, survey?.id]);
+  }, [currentUrl, survey?.id,render]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,11 +101,15 @@ const SurveyDetail = () => {
     fetchData();
   }, [survey?.id, sectionId]);
 
+
+  console.log("sections",sections)
+
   const handelClick = () => {
     if (!sectionId) return;
     deleteSection(survey!.id, sectionId!);
     setIsDeleteOpen(false);
     setSectionId("");
+    setRender(true)
   };
 
   const handelSubSectionDelete = () => {
@@ -107,8 +117,9 @@ const SurveyDetail = () => {
     deleteSubsection(survey!.id, sectionId!, subSectionId);
     setIsSubSectionDeleteOpen(false);
     setSubSectionId("");
+    setRender(true)
   };
-
+// console.log("survey",survey)
   return (
     <>
       {loading ? (
@@ -339,7 +350,7 @@ const SurveyDetail = () => {
             title="Create Section"
             onChange={() => setIsOpen(false)}
           >
-            <CreateSection surveyId={survey?.id || ""} setIsOpen={setIsOpen} />
+            <CreateSection surveyId={survey?.id || ""} setIsOpen={setIsOpen} setRender={setRender} />
           </Modal>
           <Modal
             isOpen={isEditOpen}
@@ -350,6 +361,7 @@ const SurveyDetail = () => {
               surveyId={survey?.id || ""}
               setIsOpen={setIsEditOpen}
               section={section!}
+              setRender={setRender}
             />
           </Modal>
           <Modal
@@ -361,6 +373,7 @@ const SurveyDetail = () => {
               surveyId={survey?.id || ""}
               sectionId={sectionId}
               setIsOpen={setIsSubSectionCreateOpen}
+              setRender={setRender}
             />
           </Modal>
           <Modal
@@ -373,6 +386,7 @@ const SurveyDetail = () => {
               sectionId={sectionId}
               setIsOpen={setIsSubSectionEditOpen}
               subsection={subSection!}
+              setRender={setRender}
             />
           </Modal>
           <Modal
@@ -382,6 +396,7 @@ const SurveyDetail = () => {
           >
             <DeleteModal
               handelClick={handelClick}
+              
               handleClose={() => {
                 setIsDeleteOpen(false);
                 setSectionId("");

@@ -8,17 +8,18 @@ import { updateSection } from "../../../../helpers/sections";
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   surveyId: string;
   setIsOpen: (args: boolean) => void;
+  setRender: (args: boolean) => void;
   section: Section;
 }
 
-const EditSection: React.FC<Props> = ({ surveyId, setIsOpen, section }) => {
+const EditSection: React.FC<Props> = ({ surveyId, setIsOpen, section,setRender }) => {
   const [title, setTitle] = useState<string>(section?.title);
 
   const handleUpdate = () => {
     const data = {
       title,
     };
-    updateSection(surveyId!, section?.id, data);
+    updateSection(surveyId!, section?.id, data,setRender);
     setIsOpen(false);
   };
 

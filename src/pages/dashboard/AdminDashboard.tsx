@@ -7,9 +7,11 @@ import { getSurveys } from "../../helpers/surveys";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import CreateSurvey from "../../components/ui/Modals/Surveys/CreateSurvey";
+import { Database } from "../../Types/supabase";
 
 const AdminDashboard = () => {
-  const [surveys, setSurveys] = useState<Array<Survey>>();
+  const [surveys, setSurveys] =
+    useState<Database["public"]["Tables"]["surveys"]["Row"]>();
   const [filter, setFilter] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,7 +25,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!filter) return;
-    console.log("Use Effect Called")
+    console.log("Use Effect Called");
     const fetchData = async () => {
       await getSurveys(filter, setSurveys);
     };
