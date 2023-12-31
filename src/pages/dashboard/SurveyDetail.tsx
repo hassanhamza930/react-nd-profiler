@@ -24,6 +24,7 @@ import CreateSubSection from "../../components/ui/Modals/Sections copy/CreateSub
 import EditSubSection from "../../components/ui/Modals/Sections copy/EditSubSection";
 import { BiDotsVertical } from "react-icons/bi";
 import { Database } from "../../Types/supabase";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const SurveyDetail = () => {
   const [questions, setQuestions] = useState<Array<Question>>();
@@ -76,30 +77,32 @@ const SurveyDetail = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const db = getFirestore();
-        const surveyDocRef = doc(collection(db, "surveys"), survey?.id);
-        const sectionDocRef = doc(surveyDocRef, "sections", sectionId);
-        const recommendationsCollectionRef = collection(
-          sectionDocRef,
-          "recommendations"
-        );
+    //   try {
+    //     const db = getFirestore();
+    //     const surveyDocRef = doc(collection(db, "surveys"), survey?.id);
+    //     const sectionDocRef = doc(surveyDocRef, "sections", sectionId);
+    //     const recommendationsCollectionRef = collection(
+    //       sectionDocRef,
+    //       "recommendations"
+    //     );
 
-        const querySnapshot = await getDocs(recommendationsCollectionRef);
+    //     const querySnapshot = await getDocs(recommendationsCollectionRef);
 
-        const recommendationsData = querySnapshot.docs.map((doc) => {
-          return { id: doc.id, ...doc.data() } as Recommendation;
-        });
+    //     const recommendationsData = querySnapshot.docs.map((doc) => {
+    //       return { id: doc.id, ...doc.data() } as Recommendation;
+    //     });
 
-        setRecommendations(recommendationsData[0]);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setRecommendations(null);
-      }
+    //     setRecommendations(recommendationsData[0]);
+    //   } catch (error) {
+    //     console.error("Error fetching data:", error);
+    //     setRecommendations(null);
+    //   }
     };
+  
+    
 
     fetchData();
-  }, [survey?.id, sectionId]);
+  }, [survey?.id, sectionId,section]);
 
 
   console.log("sections",sections)
@@ -122,8 +125,18 @@ const SurveyDetail = () => {
 // console.log("survey",survey)
   return (
     <>
-      {loading ? (
-        <Loading />
+      {render || loading ? (
+        <div className="w-full min-h-[100vh] justify-center items-center flex">
+
+        <ClipLoader
+          color={"#3b82f6"}
+          loading={render || loading}
+          // cssOverride={override}
+          size={50}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+          />
+          </div>
       ) : (
         <div>
           <Header heading="Dashboard" />
@@ -229,8 +242,10 @@ const SurveyDetail = () => {
                                       onClick={() => {
                                         if (recommendations) {
                                           setIsEditRecoOpen(true);
+                                          setSection(val);
                                         } else {
                                           setIsCreateRecoOpen(true);
+                                          setSection(val);
                                         }
                                         setIsDropDownOpen("");
                                       }}
@@ -385,7 +400,7 @@ const SurveyDetail = () => {
               surveyId={survey?.id || ""}
               sectionId={sectionId}
               setIsOpen={setIsSubSectionEditOpen}
-              subsection={subSection!}
+              subsection={subSection}
               setRender={setRender}
             />
           </Modal>
@@ -425,6 +440,7 @@ const SurveyDetail = () => {
               surveyId={survey?.id}
               sectionId={sectionId}
               setIsCreateOpen={setIsCreateRecoOpen}
+              section={section!}
             />
           </Modal>
           {recommendations && (

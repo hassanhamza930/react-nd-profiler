@@ -9,7 +9,6 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "update-types": "npx supabase gen types typescript --project-id \"miufdqzfqrbtwsnuvbkt\" > src/Types/supabase.ts"
-
   },
   "dependencies": {
     "@emailjs/browser": "^3.11.0",
@@ -36,6 +35,7 @@
     "react-quill": "^2.0.0",
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.21.0",
+    "react-spinners": "^0.13.8",
     "react-toastify": "^9.1.3",
     "recoil": "^0.7.7",
     "tailwind-merge": "^2.1.0"

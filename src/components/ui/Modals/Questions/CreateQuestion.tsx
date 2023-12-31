@@ -10,6 +10,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   sectionId: string;
   subsectionId:string;
   setIsOpen: (args: boolean) => void;
+  setRender: (args: boolean) => void;
 }
 
 const CreateQuestion: React.FC<Props> = ({
@@ -17,6 +18,7 @@ const CreateQuestion: React.FC<Props> = ({
   sectionId,
   subsectionId,
   setIsOpen,
+  setRender
 }) => {
   const [text, setText] = useState<string>("");
   const [option1, setOption1] = useState<string>("");
@@ -47,7 +49,7 @@ const CreateQuestion: React.FC<Props> = ({
     } else if (!option4) {
       return toast.error("option4 is not selected");
     } else {
-      createQuestion(surveyId, sectionId,subsectionId, setIsOpen, setIsLoading, data!);
+      createQuestion(surveyId, sectionId,subsectionId, setIsOpen, setIsLoading, data!,setRender);
       setIsOpen(false);
     }
   };

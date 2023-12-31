@@ -10,18 +10,20 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   sectionId: string;
   setIsOpen: (args: boolean) => void;
   setRender: (args: boolean) => void;
-  subsection: Subsection;
+  subsection: any;
   
 }
 
 const EditSubSection: React.FC<Props> = ({ setRender,surveyId,sectionId, setIsOpen, subsection }) => {
   const [title, setTitle] = useState<string>(subsection?.title);
+  console.log("sectionId",subsection)
+
 
   const handleUpdate = () => {
     const data = {
       title,
     };
-    updateSubsection(surveyId!,sectionId, subsection?.id, data,setRender);
+    updateSubsection(surveyId!,subsection.sectionid, subsection.id, data,setRender);
     setIsOpen(false);
   };
 

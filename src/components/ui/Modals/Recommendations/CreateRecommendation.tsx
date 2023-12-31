@@ -10,18 +10,20 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   surveyId: string;
   sectionId: string;
   setIsCreateOpen: (args: boolean) => void;
+  section:any
 }
 
 const CreateRecommendation: React.FC<Props> = ({
   surveyId,
   sectionId,
   setIsCreateOpen,
+  section,
 }) => {
   const [option2, setOption2] = useState<string>("");
   const [option3, setOption3] = useState<string>("");
   const [option4, setOption4] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-
+console.log("recommendation",section)
   const handelClick = () => {
     const recommendationData = {
       from25to50: option2,
@@ -34,7 +36,7 @@ const CreateRecommendation: React.FC<Props> = ({
       setIsLoading(true);
       createRecommendation(
         surveyId,
-        sectionId,
+        section,
         recommendationData,
         setIsCreateOpen,
         setIsLoading

@@ -10,7 +10,8 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   sectionId: string;
   subsectionId:string;
   setIsOpen: (args: boolean) => void;
-  question: Question;
+  question: any;
+  setRender: (args: boolean) => void;
 }
 
 const EditQuestion: React.FC<Props> = ({
@@ -19,12 +20,13 @@ const EditQuestion: React.FC<Props> = ({
   subsectionId,
   setIsOpen,
   question,
+  setRender
 }) => {
-  const [text, setText] = useState<string>(question.text);
-  const [option1, setOption1] = useState<string>(question.options.option1);
-  const [option2, setOption2] = useState<string>(question.options.option2);
-  const [option3, setOption3] = useState<string>(question.options.option3);
-  const [option4, setOption4] = useState<string>(question.options.option4);
+  const [text, setText] = useState<string>(question.title);
+  const [option1, setOption1] = useState<string>(question.option1);
+  const [option2, setOption2] = useState<string>(question.option2);
+  const [option3, setOption3] = useState<string>(question.option3);
+  const [option4, setOption4] = useState<string>(question.option4);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleUpdate = () => {
@@ -33,13 +35,13 @@ const EditQuestion: React.FC<Props> = ({
       text,
     };
     const optionData= {
-      id:question?.options?.id,
+      // id:question?.options?.id,
       option1,
       option2,
       option3,
       option4,
     }
-    editQuestion(surveyId, sectionId, subsectionId,question?.id!, questionData,optionData,setIsLoading);
+    editQuestion(surveyId, sectionId, subsectionId,question?.id!, questionData,optionData,setIsLoading,setRender);
     setIsOpen(false);
   };
 
