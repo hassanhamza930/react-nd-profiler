@@ -18,6 +18,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
   const [loading, setIsLoading] = useState(false);
+  const [numberOfQuestions, setnumberOfQuestions] = useState(0);
 
   const navigate = useNavigate();
 
@@ -32,6 +33,16 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
     fetchData().finally(() => {
       setIsLoading(false);
     });
+    var indicator=0
+    //@ts-ignore
+    var count=survey.sections.forEach((section)=>{
+      var questionCount=section.subsections.forEach((subsection)=>{
+        var question= subsection.questions.length
+        indicator=indicator+question
+      })
+    });
+    console.log(indicator);
+    setnumberOfQuestions(indicator);
   }, [survey?.id]);
 
   useEffect(() => {
@@ -75,7 +86,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                 </p>
                 {role == "admin" ? (
                   <p className="text-sm font-normal">
-                    {questions && questions?.length} questions
+                    {numberOfQuestions} questions
                   </p>
                 ) : (
                   <p className="text-sm font-normal">
@@ -168,7 +179,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
               <p className="text-sm my-3 font-normal">{survey?.description}</p>
               {role == "admin" ? (
                 <p className="text-sm font-normal">
-                  {questions && questions?.length} questions
+                  {numberOfQuestions} questions
                 </p>
               ) : (
                 <p className="text-sm font-normal">
