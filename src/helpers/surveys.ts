@@ -8,13 +8,14 @@ export const getSurveys = async (
 ) => {
   const { data, error } = await supabaseClient
     .from("surveys")
-    .select("*, sections(*,subsections(*))")
+    .select("*, sections(*,subsections(*,questions(*)))")
     .eq("role", filter)
     .order("id", { ascending: true });
   if (error) {
     toast.error(error.message);
   } else {
     setSurveys(data);
+    console.log(data);
   }
 };
 
