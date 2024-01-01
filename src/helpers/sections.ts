@@ -74,7 +74,7 @@ export const getSections = async (
   const { data, error } = await supabaseClient
     .from("sections")
     .select("*, subsections(*))")
-    .eq("surveyid", surveryId);
+    .eq("surveyid", surveryId).order('id')
 
   if (error) {
     toast.error(error.message);
