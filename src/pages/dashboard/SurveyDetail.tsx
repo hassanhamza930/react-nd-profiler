@@ -28,8 +28,9 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 const SurveyDetail = () => {
   const [questions, setQuestions] = useState<Array<Question>>();
-  const [sections, setSections] = useState<Database["public"]["Tables"]["sections"]["Row"]>();
-  const [render,setRender] = useState<boolean>(false)
+  const [sections, setSections] =
+    useState<Database["public"]["Tables"]["sections"]["Row"]>();
+  const [render, setRender] = useState<boolean>(false);
   const [survey, setSurvey] = useState<Survey>();
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -61,7 +62,6 @@ const SurveyDetail = () => {
     setRender(false);
     getSurveyById(currentUrl, setSurvey);
 
-    
     const uid = localStorage.getItem("uid")!;
     const fetchData = async () => {
       getResultsData(uid, survey!.id, setResults);
@@ -73,46 +73,40 @@ const SurveyDetail = () => {
     fetchData()
       .then(() => console.log("done"))
       .catch((err) => console.log("err", err));
-  }, [currentUrl, survey?.id,render]);
+  }, [currentUrl, survey?.id, render]);
 
   useEffect(() => {
     const fetchData = async () => {
-    //   try {
-    //     const db = getFirestore();
-    //     const surveyDocRef = doc(collection(db, "surveys"), survey?.id);
-    //     const sectionDocRef = doc(surveyDocRef, "sections", sectionId);
-    //     const recommendationsCollectionRef = collection(
-    //       sectionDocRef,
-    //       "recommendations"
-    //     );
-
-    //     const querySnapshot = await getDocs(recommendationsCollectionRef);
-
-    //     const recommendationsData = querySnapshot.docs.map((doc) => {
-    //       return { id: doc.id, ...doc.data() } as Recommendation;
-    //     });
-
-    //     setRecommendations(recommendationsData[0]);
-    //   } catch (error) {
-    //     console.error("Error fetching data:", error);
-    //     setRecommendations(null);
-    //   }
+      //   try {
+      //     const db = getFirestore();
+      //     const surveyDocRef = doc(collection(db, "surveys"), survey?.id);
+      //     const sectionDocRef = doc(surveyDocRef, "sections", sectionId);
+      //     const recommendationsCollectionRef = collection(
+      //       sectionDocRef,
+      //       "recommendations"
+      //     );
+      //     const querySnapshot = await getDocs(recommendationsCollectionRef);
+      //     const recommendationsData = querySnapshot.docs.map((doc) => {
+      //       return { id: doc.id, ...doc.data() } as Recommendation;
+      //     });
+      //     setRecommendations(recommendationsData[0]);
+      //   } catch (error) {
+      //     console.error("Error fetching data:", error);
+      //     setRecommendations(null);
+      //   }
     };
-  
-    
 
     fetchData();
-  }, [survey?.id, sectionId,section]);
+  }, [survey?.id, sectionId, section]);
 
-
-  console.log("sections",sections)
+  console.log("sections", sections);
 
   const handelClick = () => {
     if (!sectionId) return;
     deleteSection(survey!.id, sectionId!);
     setIsDeleteOpen(false);
     setSectionId("");
-    setRender(true)
+    setRender(true);
   };
 
   const handelSubSectionDelete = () => {
@@ -120,23 +114,22 @@ const SurveyDetail = () => {
     deleteSubsection(survey!.id, sectionId!, subSectionId);
     setIsSubSectionDeleteOpen(false);
     setSubSectionId("");
-    setRender(true)
+    setRender(true);
   };
-// console.log("survey",survey)
+  // console.log("survey",survey)
   return (
     <>
       {render || loading ? (
         <div className="w-full min-h-[100vh] justify-center items-center flex">
-
-        <ClipLoader
-          color={"#3b82f6"}
-          loading={render || loading}
-          // cssOverride={override}
-          size={50}
-          aria-label="Loading Spinner"
-          data-testid="loader"
+          <ClipLoader
+            color={"#3b82f6"}
+            loading={render || loading}
+            // cssOverride={override}
+            size={50}
+            aria-label="Loading Spinner"
+            data-testid="loader"
           />
-          </div>
+        </div>
       ) : (
         <div>
           <Header heading="Dashboard" />
@@ -240,20 +233,13 @@ const SurveyDetail = () => {
                                     </p>
                                     <p
                                       onClick={() => {
-                                        if (recommendations) {
-                                          setIsEditRecoOpen(true);
+                                        setIsCreateRecoOpen(true);
                                           setSection(val);
-                                        } else {
-                                          setIsCreateRecoOpen(true);
-                                          setSection(val);
-                                        }
                                         setIsDropDownOpen("");
                                       }}
                                       className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "
                                     >
-                                      {recommendations
-                                        ? "Edit Recommendation"
-                                        : "Create Recommendation"}
+                                      Add Recommendations
                                     </p>{" "}
                                     <p
                                       onClick={() => {
@@ -365,7 +351,11 @@ const SurveyDetail = () => {
             title="Create Section"
             onChange={() => setIsOpen(false)}
           >
-            <CreateSection surveyId={survey?.id || ""} setIsOpen={setIsOpen} setRender={setRender} />
+            <CreateSection
+              surveyId={survey?.id || ""}
+              setIsOpen={setIsOpen}
+              setRender={setRender}
+            />
           </Modal>
           <Modal
             isOpen={isEditOpen}
@@ -411,7 +401,6 @@ const SurveyDetail = () => {
           >
             <DeleteModal
               handelClick={handelClick}
-              
               handleClose={() => {
                 setIsDeleteOpen(false);
                 setSectionId("");

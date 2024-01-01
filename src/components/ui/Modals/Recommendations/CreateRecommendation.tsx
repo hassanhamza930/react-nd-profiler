@@ -19,11 +19,10 @@ const CreateRecommendation: React.FC<Props> = ({
   setIsCreateOpen,
   section,
 }) => {
-  const [option2, setOption2] = useState<string>("");
-  const [option3, setOption3] = useState<string>("");
-  const [option4, setOption4] = useState<string>("");
+  const [option2, setOption2] = useState<string>(section.from25to50 ?? "");
+  const [option3, setOption3] = useState<string>(section.from50to75 ?? "");
+  const [option4, setOption4] = useState<string>(section.from75to100 ?? "");
   const [isLoading, setIsLoading] = useState(false);
-console.log("recommendation",section)
   const handelClick = () => {
     const recommendationData = {
       from25to50: option2,
