@@ -234,7 +234,7 @@ const SurveyDetail = () => {
                                     <p
                                       onClick={() => {
                                         setIsCreateRecoOpen(true);
-                                          setSection(val);
+                                        setSection(val);
                                         setIsDropDownOpen("");
                                       }}
                                       className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "

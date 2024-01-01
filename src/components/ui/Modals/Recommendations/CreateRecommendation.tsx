@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../Button";
 
 import { createRecommendation } from "../../../../helpers/recommendations";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
+import { getSectionById } from "../../../../helpers/sections";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   surveyId: string;
   sectionId: string;
   setIsCreateOpen: (args: boolean) => void;
-  section:any
+  section: any;
 }
 
 const CreateRecommendation: React.FC<Props> = ({
@@ -19,10 +20,21 @@ const CreateRecommendation: React.FC<Props> = ({
   setIsCreateOpen,
   section,
 }) => {
-  const [option2, setOption2] = useState<string>(section.from25to50 ?? "");
-  const [option3, setOption3] = useState<string>(section.from50to75 ?? "");
-  const [option4, setOption4] = useState<string>(section.from75to100 ?? "");
+  const [option2, setOption2] = useState<string>("");
+  const [option3, setOption3] = useState<string>("");
+  const [option4, setOption4] = useState<string>("");
+  const [sectionDetails, setSectionDetails] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
+  console.log("section Id", sectionId);
+
+  useEffect(() => {
+    getSectionById(section.id, setSectionDetails);
+  }, [sectionId]);
+  useEffect(() => {
+    setOption2(sectionDetails?.from25to50 ?? "");
+    setOption3(sectionDetails?.from50to75 ?? "");
+    setOption4(sectionDetails?.from75to100 ?? "");
+  }, [sectionDetails]);
   const handelClick = () => {
     const recommendationData = {
       from25to50: option2,

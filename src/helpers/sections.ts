@@ -84,6 +84,25 @@ export const getSections = async (
     setSections(data);
   }
 };
+export const getSectionById = async (
+  sectionId:string,
+  // setSections: (data: Database["public"]["Tables"]["sections"]["Row"]
+  setSection: (data: any) => void
+) => {
+  const { data, error } = await supabaseClient
+    .from("sections")
+    .select("*")
+    .eq("id", sectionId).single()
+
+  if (error) {
+    toast.error(error.message);
+  } else {
+    // toast.success("All Surveys fetched successfully");
+    // console.log(data);
+    console.log("recommedation fetched",data)
+    setSection(data);
+  }
+};
 
 export const getSubsectionById = async (
   surveyId: string,
