@@ -8,9 +8,10 @@ import { updateSurvey } from "../../../../helpers/surveys";
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   survey: Survey;
   handleClose: () => void;
+  setRender?:React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const EditSurvey: React.FC<Props> = ({ handleClose, survey }) => {
+const EditSurvey: React.FC<Props> = ({ handleClose, survey,setRender }) => {
   const [title, setTitle] = useState(survey?.title);
   const [tagline, setTagline] = useState(survey?.tagline);
   const [description, setDescription] = useState(survey?.description);
@@ -23,7 +24,7 @@ const EditSurvey: React.FC<Props> = ({ handleClose, survey }) => {
       description,
       role
     };
-    updateSurvey(survey?.id, data);
+    updateSurvey(survey?.id, data,setRender);
     handleClose();
   };
 

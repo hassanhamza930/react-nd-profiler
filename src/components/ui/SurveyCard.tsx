@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import { Question, Survey } from "../../Types/index";
 import { getQuestionsById } from "../../helpers/questions";
@@ -11,9 +11,9 @@ import { Link } from "react-router-dom";
 import { getResultsData } from "../../helpers/result";
 import { Database } from "../../Types/supabase";
 
-const SurveyCard = ({ survey }: { survey:Database["public"]["Tables"]["surveys"]["Row"] }) => {
+const SurveyCard = ({ survey }: { survey:Database["public"]["Tables"]["surveys"]["Row"]}) => {
   const [role, setRole] = useState("");
-  const [questions, setQuestions] = useState<Array<Question>>();
+  const [questions, setQuestions] = useState<Database["public"]["Tables"]["sections"][]>();
   const [results, setResults] = useState<any>(); // eslint-disable-line
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);

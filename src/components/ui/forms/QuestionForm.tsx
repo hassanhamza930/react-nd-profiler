@@ -37,8 +37,6 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
     }
   }, [questions, index, surveyId]);
 
-  console.log("results", results);
-
   const findSectionId = (subsectionId: number | string): string | undefined => {
     // Loop through sections and find the section ID based on the subsection ID
     for (const section of survey.sections) {

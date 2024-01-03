@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 import { supabaseClient } from "../config/supabase";
 
-export const getQuestionsById = async (surveyId) => {
+export const getQuestionsById = async (surveyId:string) => {
   const { data, error } = await supabaseClient
     .from("sections")
     .select("*, subsections(*,questions(*))")

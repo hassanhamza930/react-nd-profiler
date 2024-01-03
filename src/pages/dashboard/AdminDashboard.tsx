@@ -7,13 +7,14 @@ import { getSurveys } from "../../helpers/surveys";
 import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import CreateSurvey from "../../components/ui/Modals/Surveys/CreateSurvey";
-import {Database}  from "../../Types/supabase";
+import { Database } from "../../Types/supabase";
 
 const AdminDashboard = () => {
   const [surveys, setSurveys] =
     useState<Database["public"]["Tables"]["surveys"]["Row"][]>();
   const [filter, setFilter] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
+  const [render,setRender] = useState<boolean>(false)
 
   useEffect(() => {
     setFilter(
@@ -25,13 +26,14 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!filter) return;
-    if(isOpen) return;
-    console.log("Use Effect Called");
+    if (isOpen) return;
+  
     const fetchData = async () => {
       await getSurveys(filter, setSurveys);
+      setRender(false)
     };
     fetchData();
-  }, [filter,isOpen]);
+  }, [filter, isOpen,render]);
 
   return (
     <div>
@@ -52,7 +54,7 @@ const AdminDashboard = () => {
         {surveys?.map((survey, index) => {
           return (
             <div key={index}>
-              <SurveyCard survey={survey} />
+              <SurveyCard survey={survey}  />
             </div>
           );
         })}
