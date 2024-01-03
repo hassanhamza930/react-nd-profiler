@@ -1,22 +1,9 @@
 import { toast } from "react-toastify";
-import { Options, Question } from "../Types";
-import { db } from "../config/firebase";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { Question } from "../Types";
+
 import { supabaseClient } from "../config/supabase";
 
-export const getQuestionsById = async (surveyId:string) => {
+export const getQuestionsById = async (surveyId: string) => {
   const { data, error } = await supabaseClient
     .from("sections")
     .select("*, subsections(*,questions(*))")
@@ -67,7 +54,7 @@ export const editQuestion = async (
       option2: optionsData.option2,
       option3: optionsData.option3,
       option4: optionsData.option4,
-      subsectionid: subsectionId,
+      subsectionid: Number(subsectionId),
     })
     .eq("id", questionId);
   if (!error) {
@@ -93,7 +80,7 @@ export const createQuestion = async (
   console.log("questions data", subsectionId);
   const { error } = await supabaseClient.from("questions").insert({
     title: data.text,
-    subsectionid: subsectionId,
+    subsectionid: Number(subsectionId),
     option1: data.options.option1,
     option2: data.options.option2,
     option3: data.options.option3,

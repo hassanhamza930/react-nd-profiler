@@ -17,6 +17,9 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const QuestionForm: React.FC<Props> = ({ questions }) => {
   const [currentQuestion, setCurrentQuestion] =
     useState<Database["public"]["Tables"]["questions"]["Row"]>();
+  const [allQuestions, setAllQuestions] = useState<
+    Database["public"]["Tables"]["questions"]["Row"][]
+  >([]);
   const [answer, setAnswer] = useState<string>();
   const [progress, setProgress] = useState(0);
   const [index, setIndex] = useState<number>(0);
@@ -35,6 +38,8 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
     if (questions) {
       setCurrentQuestion(questions[index]);
     }
+    // console.log("questions", getQuestionsFromSurvey());
+    setAllQuestions(getQuestionsFromSurvey());
   }, [questions, index, surveyId]);
 
   const findSectionId = (subsectionId: number | string): string | undefined => {
@@ -49,6 +54,109 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
     }
     return undefined;
   };
+  // const handleNext = (e: any) => {
+  //   e.preventDefault();
+  //   if (!answer) {
+  //     return toast.error("Select any option");
+  //   } else {
+  //     setColor("n");
+  //     setAnswer("");
+  //     const subsectionId = currentQuestion?.subsectionid;
+  //     const sectionId = findSectionId(subsectionId);
+
+  //     if (!sectionId) {
+  //       console.error("Section ID not found for the current question.");
+  //       return;
+  //     }
+
+  //     // Check if the surveyId matches the one in the resultState
+  //     if (surveyId !== results.surveyId) {
+  //       // If not, create a new state structure
+  //       setResults({
+  //         surveyId: surveyId,
+  //         results: [
+  //           {
+  //             sectionId: sectionId || "", // Set the appropriate default value
+  //             subsections: [
+  //               {
+  //                 subsectionId: subsectionId || "", // Set the appropriate default value
+  //                 responses: [
+  //                   {
+  //                     questionId: currentQuestion?.id,
+  //                     points: points,
+  //                   },
+  //                 ],
+  //               },
+  //             ],
+  //           },
+  //         ],
+  //       });
+  //     } else {
+  //       // If surveyId matches, update the existing state
+  //       setResults((prevResults) => {
+  //         const updatedResults = [...prevResults.results];
+
+  //         // Check if the sectionId matches the current question's section
+  //         const sectionId = findSectionId(subsectionId);
+  //         const existingSection = updatedResults.find(
+  //           (result) => result.sectionId === sectionId
+  //         );
+
+  //         if (!existingSection) {
+  //           // If the section doesn't exist, create a new section
+  //           updatedResults.push({
+  //             sectionId: sectionId || "", // Set the appropriate default value
+  //             subsections: [
+  //               {
+  //                 subsectionId: subsectionId || "", // Set the appropriate default value
+  //                 responses: [
+  //                   {
+  //                     questionId: currentQuestion?.id,
+  //                     points: points,
+  //                   },
+  //                 ],
+  //               },
+  //             ],
+  //           });
+  //         } else {
+  //           // If the section exists, check if the subsectionId matches the current question's subsection
+  //           const existingSubsection = existingSection.subsections.find(
+  //             (sub) => sub.subsectionId === subsectionId
+  //           );
+
+  //           if (!existingSubsection) {
+  //             // If the subsection doesn't exist, create a new subsection
+  //             existingSection.subsections.push({
+  //               subsectionId: subsectionId || "", // Set the appropriate default value
+  //               responses: [
+  //                 {
+  //                   questionId: currentQuestion?.id,
+  //                   points: points,
+  //                 },
+  //               ],
+  //             });
+  //           } else {
+  //             // If the subsection exists, push the response
+  //             existingSubsection.responses.push({
+  //               questionId: currentQuestion?.id,
+  //               points: points,
+  //             });
+  //           }
+  //         }
+
+  //         return { ...updatedResults }; // Make sure to return a new object to maintain immutability
+  //       });
+  //     }
+  //     console.log("option", points);
+  //     if (questions && index + 1 < questions.length) {
+  //       setIndex(index + 1);
+  //     } else {
+  //       setIsOpen(true);
+  //       setProgress(100);
+  //     }
+  //   }
+  // };
+
   const handleNext = (e: any) => {
     e.preventDefault();
     if (!answer) {
@@ -56,101 +164,128 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
     } else {
       setColor("n");
       setAnswer("");
-      const subsectionId = currentQuestion?.subsectionid;
-      const sectionId = findSectionId(subsectionId);
+    }
+    if (allQuestions.length - 1 !== index) {
+      const indexVal = index + 1;
+      setIndex(indexVal);
+      setCurrentQuestion(allQuestions[indexVal]);
 
-      if (!sectionId) {
-        console.error("Section ID not found for the current question.");
-        return;
-      }
-
-      // Check if the surveyId matches the one in the resultState
-      if (surveyId !== results.surveyId) {
-        // If not, create a new state structure
-        setResults({
-          surveyId: surveyId,
-          results: [
-            {
-              sectionId: sectionId || "", // Set the appropriate default value
-              subsections: [
-                {
-                  subsectionId: subsectionId || "", // Set the appropriate default value
-                  responses: [
-                    {
-                      questionId: currentQuestion?.id,
-                      points: points,
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        });
-      } else {
-        // If surveyId matches, update the existing state
-        setResults((prevResults) => {
-          const updatedResults = [...prevResults.results];
-
-          // Check if the sectionId matches the current question's section
-          const sectionId = findSectionId(subsectionId);
-          const existingSection = updatedResults.find(
-            (result) => result.sectionId === sectionId
-          );
-
-          if (!existingSection) {
-            // If the section doesn't exist, create a new section
-            updatedResults.push({
-              sectionId: sectionId || "", // Set the appropriate default value
-              subsections: [
-                {
-                  subsectionId: subsectionId || "", // Set the appropriate default value
-                  responses: [
-                    {
-                      questionId: currentQuestion?.id,
-                      points: points,
-                    },
-                  ],
-                },
-              ],
-            });
-          } else {
-            // If the section exists, check if the subsectionId matches the current question's subsection
-            const existingSubsection = existingSection.subsections.find(
-              (sub) => sub.subsectionId === subsectionId
-            );
-
-            if (!existingSubsection) {
-              // If the subsection doesn't exist, create a new subsection
-              existingSection.subsections.push({
-                subsectionId: subsectionId || "", // Set the appropriate default value
+      // set Results
+      setResults({
+        surveyId: surveyId,
+        results: [
+          {
+            sectionId: results.results.find(
+              (i) =>
+                i.sectionId ===
+                survey?.sections?.find((i) =>
+                  i.subsections.find(
+                    (j) => j.id === currentQuestion?.subsectionid
+                  )
+                )
+            )
+              ? results.results.find(
+                  (i) =>
+                    i.sectionId ===
+                    survey?.sections?.find((i) =>
+                      i.subsections.find(
+                        (j) => j.id === currentQuestion?.subsectionid
+                      )
+                    )?.id
+                )?.sectionId
+              : survey?.sections?.find((i) =>
+                  i.subsections.find(
+                    (j) => j.id === currentQuestion?.subsectionid
+                  )
+                )?.id,
+            subsections: [
+              {
+                subsectionId: results.results.find(
+                  (i) =>
+                    i.sectionId ===
+                    survey?.sections?.find((i) =>
+                      i.subsections.find(
+                        (j) => j.id === currentQuestion?.subsectionid
+                      )
+                    )
+                )
+                  ? results.results
+                      .find(
+                        (i) =>
+                          i.sectionId ===
+                          survey?.sections?.find((i) =>
+                            i.subsections.find(
+                              (j) => j.id === currentQuestion?.subsectionid
+                            )
+                          )?.id
+                      )
+                      ?.subsections.find(
+                        (j) => j.id === currentQuestion?.subsectionid
+                      )?.id
+                  : survey?.sections
+                      ?.find((i) =>
+                        i.subsections.find(
+                          (j) => j.id === currentQuestion?.subsectionid
+                        )
+                      )
+                      ?.subsections.find(
+                        (j) => j.id === currentQuestion?.subsectionid
+                      )?.id || "",
                 responses: [
                   {
-                    questionId: currentQuestion?.id,
+                    questionId: results.results.find(
+                      (i) =>
+                        i.sectionId ===
+                        survey?.sections?.find((i) =>
+                          i.subsections.find(
+                            (j) => j.id === currentQuestion?.subsectionid
+                          )
+                        )
+                    )
+                      ? results.results
+                          .find(
+                            (i) =>
+                              i.sectionId ===
+                              survey?.sections?.find((i) =>
+                                i.subsections.find(
+                                  (j) => j.id === currentQuestion?.subsectionid
+                                )
+                              )?.id
+                          )
+                          ?.subsections.find(
+                            (j) => j.id === currentQuestion?.subsectionid
+                          )
+                          ?.responses.find(
+                            (j) => j.questionId === currentQuestion?.id
+                          )?.questionId
+                      : currentQuestion?.id,
                     points: points,
                   },
                 ],
-              });
-            } else {
-              // If the subsection exists, push the response
-              existingSubsection.responses.push({
-                questionId: currentQuestion?.id,
-                points: points,
-              });
-            }
-          }
-
-          return { ...updatedResults }; // Make sure to return a new object to maintain immutability
-        });
-      }
-      console.log("option", points);
-      if (questions && index + 1 < questions.length) {
-        setIndex(index + 1);
-      } else {
-        setIsOpen(true);
-        setProgress(100);
-      }
+              },
+            ],
+          },
+        ],
+      });
+    } else {
+      setIsOpen(true);
+      setProgress(100);
     }
+
+    console.log(results, "results", survey);
   };
+
+  const getQuestionsFromSurvey = () => {
+    if (survey.sections) {
+      return survey.sections.reduce(
+        (acc, section) =>
+          acc.concat(section.subsections.flatMap((sub) => sub.questions)),
+        []
+      );
+    }
+    return [];
+  };
+
   return (
     <div className="px-7">
       {/* <div className="h-2 w-[255px] bg-gray-200 rounded-full mb-14 mt-12">
