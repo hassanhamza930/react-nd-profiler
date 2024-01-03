@@ -25,7 +25,7 @@ const CreateRecommendation: React.FC<Props> = ({
   const [option4, setOption4] = useState<string>("");
   const [sectionDetails, setSectionDetails] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
-  console.log("section Id", sectionId);
+  // console.log("section Id", sectionId);
 
   useEffect(() => {
     getSectionById(section.id, setSectionDetails);

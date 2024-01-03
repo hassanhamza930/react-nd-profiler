@@ -99,7 +99,7 @@ const SurveyDetail = () => {
     fetchData();
   }, [survey?.id, sectionId, section]);
 
-  console.log("sections", sections);
+  // console.log("sections", sections);
 
   const handelClick = () => {
     if (!sectionId) return;
@@ -153,34 +153,12 @@ const SurveyDetail = () => {
                   : `${questions && questions?.length} Questions`}
               </h2>
               {role !== "admin" ? (
-                results && results?.length == questions?.length ? (
-                  <Button
-                    className="bg-[#3C3C3C] text-lg text-white w-[182px] h-[49px]"
-                    onClick={() => navigate(`/dashboard/result/${currentUrl}`)}
-                  >
-                    Results
-                  </Button>
-                ) : results &&
-                  results?.length !== 0 &&
-                  results?.length < (questions?.length || 0) ? (
-                  <Button
-                    className="bg-[#3C3C3C] text-lg text-white w-[182px] h-[49px]"
-                    onClick={() =>
-                      navigate(`/dashboard/question/${currentUrl}`)
-                    }
-                  >
-                    Resume
-                  </Button>
-                ) : (
-                  <Button
-                    className="bg-[#3C3C3C] text-lg text-white w-[182px] h-[49px]"
-                    onClick={() =>
-                      navigate(`/dashboard/question/${currentUrl}`)
-                    }
-                  >
-                    Start
-                  </Button>
-                )
+                <Button
+                  className="bg-[#3C3C3C] text-lg text-white w-[182px] h-[49px]"
+                  onClick={() => navigate(`/dashboard/question/${currentUrl}`)}
+                >
+                  Start
+                </Button>
               ) : (
                 <div>
                   <Button

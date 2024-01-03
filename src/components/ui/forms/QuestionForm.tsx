@@ -1,53 +1,56 @@
 import React, { useEffect, useState } from "react";
 import Button from "../Button";
-import { Question } from "../../../Types";
-
 import Modal from "../Modal";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { addResponse } from "../../../helpers/result";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Database } from "../../../Types/supabase";
+import { useRecoilState } from "recoil";
+import { surveyState } from "../../../recoil/recoil";
+import { resultState } from "../../../recoil/recoil";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  questions: Array<Question> | undefined;
+  questions: Database["public"]["Tables"]["questions"]["Row"][] | undefined;
 }
 
 const QuestionForm: React.FC<Props> = ({ questions }) => {
-  const [currentQuestion, setCurrentQuestion] = useState<Question>();
+  const [currentQuestion, setCurrentQuestion] =
+    useState<Database["public"]["Tables"]["questions"]["Row"]>();
   const [answer, setAnswer] = useState<string>();
   const [progress, setProgress] = useState(0);
-  // const [results, setResults] = useState<any>();
   const [index, setIndex] = useState<number>(0);
   const [isOpen, setIsOpen] = useState(false);
   const [option, setOption] = useState<string>("");
   const [color, setColor] = useState("");
+  const [survey, setSurvey] = useRecoilState(surveyState);
+  const [results, setResults] = useRecoilState(resultState);
+  const [points, setPoints] = useState<number>(0);
 
   const pathname = window.location.pathname;
   const navigate = useNavigate();
   const surveyId = pathname.split("/")[3];
 
   useEffect(() => {
-    // setIndex(Number(localStorage.getItem("responses")));
-    // const uid = localStorage.getItem("uid")!;
-    const responses = Number(localStorage.getItem("responses"));
-    // getResultsData(uid, surveyId, setResults);
-
-    if (responses > 0 && index == 0) {
-      if (questions && questions?.length > 0) {
-        setCurrentQuestion(questions[responses]);
-        const percentage = (responses / questions?.length) * 100;
-        setProgress(percentage);
-      }
-    } else {
-      if (questions && questions?.length > 0) {
-        setCurrentQuestion(questions[index]);
-        const percentage = (index / questions?.length) * 100;
-        setProgress(percentage);
-      }
+    if (questions) {
+      setCurrentQuestion(questions[index]);
     }
   }, [questions, index, surveyId]);
 
-  // eslint-disable-next-line
+  console.log("results", results);
+
+  const findSectionId = (subsectionId: number | string): string | undefined => {
+    // Loop through sections and find the section ID based on the subsection ID
+    for (const section of survey.sections) {
+      const foundSubsection = section.subsections.find(
+        (sub) => sub.id === subsectionId
+      );
+      if (foundSubsection) {
+        return section.id;
+      }
+    }
+    return undefined;
+  };
   const handleNext = (e: any) => {
     e.preventDefault();
     if (!answer) {
@@ -55,15 +58,93 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
     } else {
       setColor("n");
       setAnswer("");
-      addResponse(
-        localStorage.getItem("uid")!,
-        currentQuestion!.sectionId!,
-        currentQuestion.subsectionId,
-        currentQuestion!.id!,
-        surveyId,
-        answer,
-        option
-      );
+      const subsectionId = currentQuestion?.subsectionid;
+      const sectionId = findSectionId(subsectionId);
+
+      if (!sectionId) {
+        console.error("Section ID not found for the current question.");
+        return;
+      }
+
+      // Check if the surveyId matches the one in the resultState
+      if (surveyId !== results.surveyId) {
+        // If not, create a new state structure
+        setResults({
+          surveyId: surveyId,
+          results: [
+            {
+              sectionId: sectionId || "", // Set the appropriate default value
+              subsections: [
+                {
+                  subsectionId: subsectionId || "", // Set the appropriate default value
+                  responses: [
+                    {
+                      questionId: currentQuestion?.id,
+                      points: points,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        });
+      } else {
+        // If surveyId matches, update the existing state
+        setResults((prevResults) => {
+          const updatedResults = [...prevResults.results];
+
+          // Check if the sectionId matches the current question's section
+          const sectionId = findSectionId(subsectionId);
+          const existingSection = updatedResults.find(
+            (result) => result.sectionId === sectionId
+          );
+
+          if (!existingSection) {
+            // If the section doesn't exist, create a new section
+            updatedResults.push({
+              sectionId: sectionId || "", // Set the appropriate default value
+              subsections: [
+                {
+                  subsectionId: subsectionId || "", // Set the appropriate default value
+                  responses: [
+                    {
+                      questionId: currentQuestion?.id,
+                      points: points,
+                    },
+                  ],
+                },
+              ],
+            });
+          } else {
+            // If the section exists, check if the subsectionId matches the current question's subsection
+            const existingSubsection = existingSection.subsections.find(
+              (sub) => sub.subsectionId === subsectionId
+            );
+
+            if (!existingSubsection) {
+              // If the subsection doesn't exist, create a new subsection
+              existingSection.subsections.push({
+                subsectionId: subsectionId || "", // Set the appropriate default value
+                responses: [
+                  {
+                    questionId: currentQuestion?.id,
+                    points: points,
+                  },
+                ],
+              });
+            } else {
+              // If the subsection exists, push the response
+              existingSubsection.responses.push({
+                questionId: currentQuestion?.id,
+                points: points,
+              });
+            }
+          }
+
+          return { ...updatedResults }; // Make sure to return a new object to maintain immutability
+        });
+      }
+      console.log("option", points);
       if (questions && index + 1 < questions.length) {
         setIndex(index + 1);
       } else {
@@ -72,21 +153,20 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
       }
     }
   };
-
   return (
     <div className="px-7">
-      <div className="h-2 w-[255px] bg-gray-200 rounded-full mb-14 mt-12">
+      {/* <div className="h-2 w-[255px] bg-gray-200 rounded-full mb-14 mt-12">
         <div
           className={`h-2 bg-primary rounded-full`}
           style={{ width: progress == 100 ? 99.99 + "%" : progress + "%" }}
         ></div>
-      </div>
-      {currentQuestion?.text ? (
-        <h2 className="text-3xl font-medium pe-10 text-primary">
-          {currentQuestion?.text}
+      </div> */}
+      {currentQuestion?.title ? (
+        <h2 className="mt-14 text-3xl font-medium pe-10 text-primary">
+          {currentQuestion?.title}
         </h2>
       ) : (
-        <div className="bg-gray-200 max-w-[50vw] h-10 rounded animate-pulse"></div>
+        <div className="bg-gray-200 max-w-[50vw] h-10 rounded animate-pulse mt-14"></div>
       )}
       <div>
         <form className="mt-12">
@@ -95,14 +175,15 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
               className="hidden"
               id="radio1"
               onClick={() => {
-                setAnswer(currentQuestion?.options?.option1);
+                setAnswer(currentQuestion?.option1);
                 setOption("A");
+                setPoints(1);
               }}
               type="radio"
               name="radio"
               required
             />
-            {currentQuestion?.options?.option1 ? (
+            {currentQuestion?.option1 ? (
               <label
                 className={`flex flex-col p-3 max-w-[40vw] border-2 rounded-lg border-primary ${
                   color === "a" && "bg-[#f0801037]"
@@ -114,7 +195,7 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
                   <span className="rounded-md bg-primary py-1 px-2  text-white ms-2 me-3">
                     A
                   </span>
-                  {currentQuestion?.options?.option1}
+                  {currentQuestion?.option1}
                 </span>
               </label>
             ) : (
@@ -126,14 +207,15 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
               className="hidden"
               id="radio2"
               onClick={() => {
-                setAnswer(currentQuestion?.options?.option2);
+                setAnswer(currentQuestion?.option2);
                 setOption("B");
+                setPoints(0.75);
               }}
               type="radio"
               name="radio"
               required
             />
-            {currentQuestion?.options?.option2 ? (
+            {currentQuestion?.option2 ? (
               <label
                 className={`flex flex-col p-3 max-w-[40vw] border-2 rounded-lg border-primary ${
                   color === "b" && "bg-[#f0801037]"
@@ -145,7 +227,7 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
                   <span className="rounded-md bg-primary py-1 px-2 text-white ms-2 me-3">
                     B
                   </span>
-                  {currentQuestion?.options?.option2}
+                  {currentQuestion?.option2}
                 </span>
               </label>
             ) : (
@@ -157,14 +239,15 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
               className="hidden"
               id="radio3"
               onClick={() => {
-                setAnswer(currentQuestion?.options?.option3);
+                setAnswer(currentQuestion?.option3);
                 setOption("C");
+                setPoints(0.5);
               }}
               type="radio"
               name="radio"
               required
             />
-            {currentQuestion?.options?.option3 ? (
+            {currentQuestion?.option3 ? (
               <label
                 className={`flex flex-col p-3 max-w-[40vw] border-2 rounded-lg border-primary ${
                   color == "c" && "bg-[#f0801037]"
@@ -176,7 +259,7 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
                   <span className="rounded-md bg-primary py-1 px-2 text-white ms-2 me-3">
                     C
                   </span>
-                  {currentQuestion?.options?.option3}
+                  {currentQuestion?.option3}
                 </span>
               </label>
             ) : (
@@ -188,14 +271,15 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
               className="hidden"
               id="radio4"
               onClick={() => {
-                setAnswer(currentQuestion?.options?.option4);
+                setAnswer(currentQuestion?.option4);
                 setOption("D");
+                setPoints(0.25);
               }}
               type="radio"
               name="radio"
               required
             />
-            {currentQuestion?.options?.option4 ? (
+            {currentQuestion?.option4 ? (
               <label
                 className={`flex flex-col p-3 max-w-[40vw] border-2 rounded-lg border-primary ${
                   color === "d" && "bg-[#f0801037]"
@@ -207,7 +291,7 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
                   <span className="rounded-md bg-primary py-1 px-2 text-white ms-2 me-3">
                     D
                   </span>
-                  {currentQuestion?.options?.option4}
+                  {currentQuestion?.option4}
                 </span>
               </label>
             ) : (

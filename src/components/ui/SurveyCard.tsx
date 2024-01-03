@@ -9,8 +9,9 @@ import DeleteSurvey from "./Modals/DeleteModal";
 import { deleteSurvey } from "../../helpers/surveys";
 import { Link } from "react-router-dom";
 import { getResultsData } from "../../helpers/result";
+import { Database } from "../../Types/supabase";
 
-const SurveyCard = ({ survey }: { survey: Survey }) => {
+const SurveyCard = ({ survey }: { survey:Database["public"]["Tables"]["surveys"]["Row"] }) => {
   const [role, setRole] = useState("");
   const [questions, setQuestions] = useState<Array<Question>>();
   const [results, setResults] = useState<any>(); // eslint-disable-line
@@ -41,7 +42,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
         indicator=indicator+question
       })
     });
-    console.log(indicator);
+    // console.log(indicator);
     setnumberOfQuestions(indicator);
   }, [survey?.id]);
 
@@ -55,26 +56,15 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
     deleteSurvey(survey?.id);
     setIsDeleteOpen(false);
   };
-
   return loading ? (
     <div className="relative bg-gray-300 text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between animate-pulse"></div>
   ) : (
     <>
-      {role !== "admin" ? (
-        questions &&
-        questions?.length > 0 && (
+      {role !== "admin" ?  (
           <div className="relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end mt-5 rounded-xl w-[300px] h-[235px] text-white font-medium flex flex-col justify-between items-start overflow-hidden">
             <div className="absolute z-10 bg-blue-600/50 backdrop-blur-lg h-full w-full"></div>
             <div className="relative h-full w-full z-20 flex-col flex justify-between items-start p-5 ">
               <div>
-                {/* {role !== "admin" && (
-                <div className="h-1 w-full bg-black rounded-full mb-3">
-                  <div
-                    className="h-1 bg-white rounded-full"
-                    style={{ width: progress + "%" }}
-                  ></div>
-                </div>
-              )} */}
                 <Link
                   to={`/dashboard/survey/${survey.id}`}
                   className="text-2xl font-normal cursor-pointer uppercase"
@@ -90,15 +80,17 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                   </p>
                 ) : (
                   <p className="text-sm font-normal">
-                    Completed {results && results?.length} questions
+                    {/* Completed {results && results?.length} questions */}
+                    {numberOfQuestions} questions
+
                   </p>
                 )}
               </div>
               <div className="flex justify-end mb-3">
-                {results && results?.length == questions?.length ? (
+                {results && results?.length == numberOfQuestions ? (
                   <Button
                     className={`bg-white text-sm font-normal  p-4 whitespace-nowrap ${
-                      results?.length == questions?.length
+                      results?.length == numberOfQuestions
                         ? "text-blue-600"
                         : "text-blue-600"
                     } w-[104px] h-[24px]`}
@@ -106,23 +98,10 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
                   >
                     Results
                   </Button>
-                ) : results &&
-                  results?.length !== 0 &&
-                  results?.length < questions?.length ? (
-                  <Button
-                    className={`bg-white text-sm p-4 whitespace-nowrap ${
-                      results?.length == questions?.length
-                        ? "text-blue-600"
-                        : "text-blue-600"
-                    } w-[104px] h-[24px]`}
-                    onClick={() => navigate(`/dashboard/question/${survey.id}`)}
-                  >
-                    Resume
-                  </Button>
-                ) : (
+                ) :(
                   <Button
                     className={`bg-white text-sm p-4 whitespace-nowrap font-regular ${
-                      results?.length == questions?.length
+                      results?.length == numberOfQuestions
                         ? "text-blue-600"
                         : "text-blue-600"
                     } w-[104px] h-[24px]`}
@@ -154,7 +133,7 @@ const SurveyCard = ({ survey }: { survey: Survey }) => {
               </Modal>
             </div>
           </div>
-        )
+        
       ) : (
         <div
           className={`relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end mt-5 rounded-xl w-[300px] h-[235px] text-white font-medium flex flex-col justify-between items-start overflow-hidden`}

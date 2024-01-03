@@ -15,7 +15,7 @@ export const getSurveys = async (
     toast.error(error.message);
   } else {
     setSurveys(data);
-    console.log(data);
+    console.log("data",data);
   }
 };
 

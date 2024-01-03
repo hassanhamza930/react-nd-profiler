@@ -13,6 +13,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import { supabaseClient } from "./config/supabase";
+import { RecoilRoot } from "recoil";
 
 function App() {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -38,6 +39,7 @@ function App() {
 
   return (
     <div style={{ fontFamily: "Rubik" }}>
+      <RecoilRoot>
       <ToastContainer />
       <BrowserRouter>
         <Routes>
@@ -78,6 +80,7 @@ function App() {
           <Route path="*" element={<Login />} />
         </Routes>
       </BrowserRouter>
+      </RecoilRoot>
     </div>
   );
 }

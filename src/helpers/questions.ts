@@ -16,59 +16,17 @@ import {
 } from "firebase/firestore";
 import { supabaseClient } from "../config/supabase";
 
+export const getQuestionsById = async (surveyId) => {
+  const { data, error } = await supabaseClient
+    .from("sections")
+    .select("*, subsections(*,questions(*))")
+    .eq("surveyid", surveyId)
+    .order("id", { ascending: true });
 
-export const getQuestionsById = async (surveyId: string) => {
-  try {
-    const surveyCollection = doc(db, "surveys", surveyId);
-
-    const sectionsSnapshot = await getDocs(
-      collection(surveyCollection, "sections")
-    );
-
-    const questionArray: Array<Question> = [];
-
-    for (const sectionDoc of sectionsSnapshot.docs) {
-      const sectionId = sectionDoc.id;
-
-      const subsectionsSnapshot = await getDocs(
-        collection(sectionDoc.ref, "subsections")
-      );
-
-      for (const subsectionDoc of subsectionsSnapshot.docs) {
-        const subsectionId = subsectionDoc.id;
-
-        const questionsSnapshot = await getDocs(
-          collection(subsectionDoc.ref, "questions")
-        );
-
-        for (const questionDoc of questionsSnapshot.docs) {
-          const optionsSnapshot = await getDocs(
-            collection(questionDoc.ref, "options")
-          );
-
-          optionsSnapshot.forEach((optionDoc) => {
-            const question = {
-              id: questionDoc.id,
-              text: questionDoc.data().text,
-              sectionId: sectionId,
-              subsectionId: subsectionId,
-              options: {
-                id: optionDoc.id,
-                option1: optionDoc.data().option1,
-                option2: optionDoc.data().option2,
-                option3: optionDoc.data().option3,
-                option4: optionDoc.data().option4,
-              },
-            };
-            questionArray.push(question);
-          });
-        }
-      }
-    }
-    return questionArray;
-  } catch (error) {
-    console.error("Error fetching questions:", error);
+  if (error) {
+    throw new Error(error.message);
   }
+  return data;
 };
 
 export const getQuestionsBySubsectionId = async (
@@ -99,28 +57,27 @@ export const editQuestion = async (
   questionData: any,
   optionsData: any,
   setIsLoading: (args: boolean) => void,
-  setRender: (args: boolean) => void,
-
+  setRender: (args: boolean) => void
 ) => {
   const { error } = await supabaseClient
     .from("questions")
     .update({
       title: questionData.text,
-      option1:optionsData.option1,
-      option2:optionsData.option2,
-      option3:optionsData.option3,
-      option4:optionsData.option4,
+      option1: optionsData.option1,
+      option2: optionsData.option2,
+      option3: optionsData.option3,
+      option4: optionsData.option4,
       subsectionid: subsectionId,
     })
     .eq("id", questionId);
   if (!error) {
     toast.success("Question Updated Successfully");
     setRender(true);
-    setIsLoading(false)
+    setIsLoading(false);
   } else {
     console.log("error", error);
     toast.error("Question did not Update, Something went wrong!");
-    setIsLoading(false)
+    setIsLoading(false);
   }
 };
 
