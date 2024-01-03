@@ -91,6 +91,7 @@ export interface Recommendation {
 }
 
 export interface RecommendationData {
+  section: ReactNode;
   id?: string;
   surveyId: string | null;
   sectionId: string;

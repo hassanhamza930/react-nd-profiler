@@ -9,6 +9,8 @@ import { Database } from "../../../Types/supabase";
 import { useRecoilState } from "recoil";
 import { surveyState } from "../../../recoil/recoil";
 import { resultState } from "../../../recoil/recoil";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../../config/firebase";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   questions: Database["public"]["Tables"]["questions"]["Row"][] | undefined;
@@ -34,136 +36,26 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
       sectionId: string;
       subsectionId: string;
       questionId: string;
+      sectionname: string;
       points: number;
+      sectionRecOne:string;
+      sectionRecTwo:string;
+      sectionRecThree:string;
     }>
   >([]);
 
   const pathname = window.location.pathname;
   const navigate = useNavigate();
   const surveyId = pathname.split("/")[3];
+  const userId = localStorage.getItem("uid");
 
   useEffect(() => {
     if (questions) {
-      setCurrentQuestion(questions[index]);
+      setCurrentQuestion(allQuestions[index]);
     }
     // console.log("questions", getQuestionsFromSurvey());
     setAllQuestions(getQuestionsFromSurvey());
   }, [questions, index, surveyId]);
-
-  const findSectionId = (subsectionId: number | string): string | undefined => {
-    // Loop through sections and find the section ID based on the subsection ID
-    for (const section of survey.sections) {
-      const foundSubsection = section.subsections.find(
-        (sub) => sub.id === subsectionId
-      );
-      if (foundSubsection) {
-        return section.id;
-      }
-    }
-    return undefined;
-  };
-  // const handleNext = (e: any) => {
-  //   e.preventDefault();
-  //   if (!answer) {
-  //     return toast.error("Select any option");
-  //   } else {
-  //     setColor("n");
-  //     setAnswer("");
-  //     const subsectionId = currentQuestion?.subsectionid;
-  //     const sectionId = findSectionId(subsectionId);
-
-  //     if (!sectionId) {
-  //       console.error("Section ID not found for the current question.");
-  //       return;
-  //     }
-
-  //     // Check if the surveyId matches the one in the resultState
-  //     if (surveyId !== results.surveyId) {
-  //       // If not, create a new state structure
-  //       setResults({
-  //         surveyId: surveyId,
-  //         results: [
-  //           {
-  //             sectionId: sectionId || "", // Set the appropriate default value
-  //             subsections: [
-  //               {
-  //                 subsectionId: subsectionId || "", // Set the appropriate default value
-  //                 responses: [
-  //                   {
-  //                     questionId: currentQuestion?.id,
-  //                     points: points,
-  //                   },
-  //                 ],
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //       });
-  //     } else {
-  //       // If surveyId matches, update the existing state
-  //       setResults((prevResults) => {
-  //         const updatedResults = [...prevResults.results];
-
-  //         // Check if the sectionId matches the current question's section
-  //         const sectionId = findSectionId(subsectionId);
-  //         const existingSection = updatedResults.find(
-  //           (result) => result.sectionId === sectionId
-  //         );
-
-  //         if (!existingSection) {
-  //           // If the section doesn't exist, create a new section
-  //           updatedResults.push({
-  //             sectionId: sectionId || "", // Set the appropriate default value
-  //             subsections: [
-  //               {
-  //                 subsectionId: subsectionId || "", // Set the appropriate default value
-  //                 responses: [
-  //                   {
-  //                     questionId: currentQuestion?.id,
-  //                     points: points,
-  //                   },
-  //                 ],
-  //               },
-  //             ],
-  //           });
-  //         } else {
-  //           // If the section exists, check if the subsectionId matches the current question's subsection
-  //           const existingSubsection = existingSection.subsections.find(
-  //             (sub) => sub.subsectionId === subsectionId
-  //           );
-
-  //           if (!existingSubsection) {
-  //             // If the subsection doesn't exist, create a new subsection
-  //             existingSection.subsections.push({
-  //               subsectionId: subsectionId || "", // Set the appropriate default value
-  //               responses: [
-  //                 {
-  //                   questionId: currentQuestion?.id,
-  //                   points: points,
-  //                 },
-  //               ],
-  //             });
-  //           } else {
-  //             // If the subsection exists, push the response
-  //             existingSubsection.responses.push({
-  //               questionId: currentQuestion?.id,
-  //               points: points,
-  //             });
-  //           }
-  //         }
-
-  //         return { ...updatedResults }; // Make sure to return a new object to maintain immutability
-  //       });
-  //     }
-  //     console.log("option", points);
-  //     if (questions && index + 1 < questions.length) {
-  //       setIndex(index + 1);
-  //     } else {
-  //       setIsOpen(true);
-  //       setProgress(100);
-  //     }
-  //   }
-  // };
 
   const handleNext = (e: any) => {
     e.preventDefault();
@@ -189,6 +81,18 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
     const sectionId = survey?.sections?.find((i) =>
       i.subsections?.find((j) => j.id === subsectionId)
     )?.id;
+    const sectionname = survey?.sections?.find((i) =>
+      i.subsections?.find((j) => j.id === subsectionId)
+    )?.title;
+    const sectionRecOne = survey?.sections?.find((i) =>
+      i.subsections?.find((j) => j.id === subsectionId)
+    )?.from75to100;
+    const sectionRecTwo = survey?.sections?.find((i) =>
+      i.subsections?.find((j) => j.id === subsectionId)
+    )?.from50to75;
+    const sectionRecThree = survey?.sections?.find((i) =>
+      i.subsections?.find((j) => j.id === subsectionId)
+    )?.from25to50;
     const questionId = currentQuestion?.id;
 
     setTempResult((prev) => [
@@ -197,45 +101,15 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
         points,
         questionId,
         sectionId,
+        sectionname,
         subsectionId,
+        sectionRecOne,
+        sectionRecTwo,
+        sectionRecThree,
       } as any,
     ]);
   };
 
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     const result = tempResult.map((i) => {
-  //       const sameSubsectionQuestions = tempResult
-  //         .filter((j) => j.subsectionId === i.subsectionId)
-  //         .map((i) => ({
-  //           questionId: i.questionId,
-  //           points: i.points,
-  //         }));
-  //       const sameSectionSubsections = tempResult
-  //         .filter((j) => j.sectionId === i.sectionId)
-  //         .map((i) => ({
-  //           subsectionId: i.subsectionId,
-  //           responses: sameSubsectionQuestions,
-  //         }))[0];
-  //       const sameSurveySections = tempResult
-  //         .filter((j) => j.sectionId === i.sectionId)
-  //         .map((i) => ({
-  //           sectionId: i.sectionId,
-  //           subsections: sameSectionSubsections,
-  //         }))[0];
-  //       return {
-  //         sameSurveySections,
-  //       };
-  //     })
-
-  //     setResults({ surveyId,
-  //       // remove the repeated result
-  //       results:
-
-  //     });
-  //     console.log({ surveyId, results: result });
-  //   }
-  // }, [isOpen]);
   useEffect(() => {
     if (isOpen) {
       const uniqueResults = tempResult.reduce((acc, current) => {
@@ -248,6 +122,10 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
           // If not found, add a new entry
           acc.push({
             sectionId: current.sectionId,
+            sectionname: current.sectionname,
+            sectionRecOne: current.sectionRecOne,
+            sectionRecTwo: current.sectionRecTwo,
+            sectionRecThree: current.sectionRecThree,
             subsections: [
               {
                 subsectionId: current.subsectionId,
@@ -299,8 +177,69 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
       });
 
       console.log({ surveyId, results: uniqueResults });
+      calculteresults(uniqueResults);
     }
   }, [isOpen]);
+
+  const calculteresults = async (uniqueResults) => {
+    const totalSurveyPoints = 100;
+    const pointsPerSection = totalSurveyPoints / uniqueResults.length;
+
+    // Initialize result object
+    const resultObject = {
+      surveyId: surveyId,
+      scoreBySection: [],
+      recommendations: [],
+    };
+
+    // Iterate through results
+    for (const result of uniqueResults) {
+      // Initialize total score for the current section
+      let sectionTotalScore = 0;
+
+      // Iterate through subsections
+      for (const subsection of result.subsections) {
+        // Iterate through responses
+        for (const response of subsection.responses) {
+          // Accumulate points for the current section
+          sectionTotalScore += response.points;
+        }
+      }
+
+      // Calculate proportionate points for the section based on the total survey points
+      const proportionatePoints =
+        (sectionTotalScore / result.subsections.length) * pointsPerSection;
+
+      // Add section and its proportionate points to the result object
+      resultObject.scoreBySection.push({
+        section: result.sectionname,
+        score: proportionatePoints,
+      });
+      const recommendation =
+      proportionatePoints >= 75
+        ? result.sectionRecOne
+        : proportionatePoints >= 50
+        ? result.sectionRecTwo
+        : result.sectionRecThree;
+
+    resultObject.recommendations.push({
+      section: result.sectionname,
+      recommendation: recommendation,
+    });
+  }
+    
+
+    console.log(resultObject);
+    console.log(userId);
+    try {
+      await addDoc(
+        collection(db, "users", userId, "completedSurveys"),
+        resultObject
+      );
+    } catch (error) {
+      console.log("Error completedSurveys", error.message);
+    }
+  };
 
   const getQuestionsFromSurvey = () => {
     if (survey.sections) {
@@ -315,12 +254,12 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
 
   return (
     <div className="px-7">
-      {/* <div className="h-2 w-[255px] bg-gray-200 rounded-full mb-14 mt-12">
+      <div className="h-2 w-[255px] bg-gray-200 rounded-full mb-14 mt-12">
         <div
           className={`h-2 bg-primary rounded-full`}
           style={{ width: progress == 100 ? 99.99 + "%" : progress + "%" }}
         ></div>
-      </div> */}
+      </div>
       {currentQuestion?.title ? (
         <h2 className="mt-14 text-3xl font-medium pe-10 text-primary">
           {currentQuestion?.title}
@@ -472,9 +411,9 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
       <Modal
         isOpen={isOpen}
         title="Survey Completed"
-        onChange={() => setIsOpen(false)}
+        onChange={() => navigate(`/dashboard/user`)}
       >
-        <div className="text-center">
+        <div className="text-center flex flex-col items-center">
           <div className="flex justify-center mt-8">
             <IoMdCheckmarkCircleOutline size={70} color="#25b622" />
           </div>
@@ -482,7 +421,7 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
             Congratulations! You have completed your survey.
           </h1>
           <Button
-            className="bg-primary text-md text-white mb-5 w-[182px] h-[40px]"
+            className="bg-primary text-md text-white mb-5  h-[40px]"
             type="submit"
             onClick={() => navigate(`/dashboard/result/${surveyId}`)}
           >

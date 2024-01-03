@@ -88,7 +88,7 @@ export const getResultsData = (
           response: doc.data().response,
           option: doc.data().option,
           sectionId: doc.data().sectionId,
-          subsectionId:doc.data().subsectionId,
+          subsectionId: doc.data().subsectionId,
           surveyId: doc.data().surveyId,
           questionId: doc.data().questionId,
         }));
@@ -222,7 +222,8 @@ export const getResults = async (
           questionMarks,
         });
 
-        acc[sectionKey].subsections[subsectionId].obtainedMarks += questionMarks;
+        acc[sectionKey].subsections[subsectionId].obtainedMarks +=
+          questionMarks;
         acc[sectionKey].subsections[subsectionId].totalQuestions++;
 
         acc[sectionKey].subsections[subsectionId].responses.push({
@@ -257,7 +258,7 @@ export const getResults = async (
         };
       }
     );
-    console.log(resultArray)
+    console.log(resultArray);
     setResults(resultArray);
     return resultArray;
   } catch (error) {
@@ -265,7 +266,37 @@ export const getResults = async (
     return [];
   }
 };
+export const getAllResultData = async (
+  userId: string,
+  surveyId: string,
+  setResults: (args: any) => void
+) => {
+  const completedSurveysRef = collection(
+    db,
+    "users",
+    userId,
+    "completedSurveys"
+  );
 
+  // Create a query to filter documents by surveyId
+  const completedSurveysQuery = query(
+    completedSurveysRef,
+    where("surveyId", "==", surveyId)
+  );
+
+  try {
+    const completedSurveysSnapshot = await getDocs(completedSurveysQuery);
+
+    // Extract data from the documents
+    const resultData = completedSurveysSnapshot.docs.map((doc) => doc.data());
+    setResults(resultData);
+    console.log(resultData, "<====resultData");
+  } catch (error) {
+    console.error("Error fetching completed surveys:", error.message);
+    // Handle the error
+    return [];
+  }
+};
 
 /**
  *

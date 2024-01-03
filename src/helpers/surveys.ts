@@ -1,11 +1,23 @@
 import { toast } from "react-toastify";
 import { Database } from "../Types/supabase";
 import { supabaseClient } from "../config/supabase";
+import { collection, getDocs, query } from "firebase/firestore";
+import { db } from "../config/firebase";
 
 export const getSurveys = async (
   filter: string,
   setSurveys: (data: any) => void
 ) => {
+//   const completedSurveysRef = collection(
+//     db,
+//     "users",
+//     localStorage.getItem("uid"),
+//     "completedSurveys"
+//   );
+//   const completedSurveysQuery = query(completedSurveysRef);
+//   const completedSurveysSnapshot = await getDocs(completedSurveysQuery);
+//   const completedSurveyIds = completedSurveysSnapshot.docs.map((doc) => doc.data().surveyId);
+// console.log(completedSurveyIds)
   const { data, error } = await supabaseClient
     .from("surveys")
     .select("*, sections(*,subsections(*,questions(*)))")
@@ -14,27 +26,35 @@ export const getSurveys = async (
   if (error) {
     toast.error(error.message);
   } else {
+    // if (filter !== "admin") {
+    //   const filteredSurveys = data.filter(
+    //     (survey) => !completedSurveyIds.includes(survey.id)
+    //   );
+
+    //   setSurveys(filteredSurveys);
+    //   console.log("Filtered surveys:", filteredSurveys);
+    //   return;
+    // }
     setSurveys(data);
-    console.log("data",data);
+    console.log("data", data);
   }
 };
 
-
 export const getSurveyById = async (
   surveyId: string,
-  setSurveys: (data: any) => void,
+  setSurveys: (data: any) => void
 ) => {
   const { data, error } = await supabaseClient
     .from("surveys")
     .select("*, sections(*,subsections(*))")
-    .eq("id", surveyId).single()
+    .eq("id", surveyId)
+    .single();
   if (error) {
     toast.error(error.message);
   } else {
     setSurveys(data);
   }
 };
-
 
 export const createSurvey = async (newSurveyData: any) => {
   const { error } = await supabaseClient.from("surveys").insert({
@@ -50,8 +70,10 @@ export const createSurvey = async (newSurveyData: any) => {
   }
 };
 
-
-export const updateSurvey = async (surveyId: string, updatedData: Database["public"]["Tables"]["surveys"]["Update"]) => {
+export const updateSurvey = async (
+  surveyId: string,
+  updatedData: Database["public"]["Tables"]["surveys"]["Update"]
+) => {
   const { error } = await supabaseClient
     .from("surveys")
     .update({
