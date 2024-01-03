@@ -29,6 +29,14 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
   const [survey, setSurvey] = useRecoilState(surveyState);
   const [results, setResults] = useRecoilState(resultState);
   const [points, setPoints] = useState<number>(0);
+  const [tempResult, setTempResult] = useState<
+    Array<{
+      sectionId: string;
+      subsectionId: string;
+      questionId: string;
+      points: number;
+    }>
+  >([]);
 
   const pathname = window.location.pathname;
   const navigate = useNavigate();
@@ -159,121 +167,140 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
 
   const handleNext = (e: any) => {
     e.preventDefault();
+
     if (!answer) {
       return toast.error("Select any option");
     } else {
       setColor("n");
       setAnswer("");
     }
-    if (allQuestions.length - 1 !== index) {
-      const indexVal = index + 1;
-      setIndex(indexVal);
-      setCurrentQuestion(allQuestions[indexVal]);
 
-      // set Results
-      setResults({
-        surveyId: surveyId,
-        results: [
-          {
-            sectionId: results.results.find(
-              (i) =>
-                i.sectionId ===
-                survey?.sections?.find((i) =>
-                  i.subsections.find(
-                    (j) => j.id === currentQuestion?.subsectionid
-                  )
-                )
-            )
-              ? results.results.find(
-                  (i) =>
-                    i.sectionId ===
-                    survey?.sections?.find((i) =>
-                      i.subsections.find(
-                        (j) => j.id === currentQuestion?.subsectionid
-                      )
-                    )?.id
-                )?.sectionId
-              : survey?.sections?.find((i) =>
-                  i.subsections.find(
-                    (j) => j.id === currentQuestion?.subsectionid
-                  )
-                )?.id,
-            subsections: [
-              {
-                subsectionId: results.results.find(
-                  (i) =>
-                    i.sectionId ===
-                    survey?.sections?.find((i) =>
-                      i.subsections.find(
-                        (j) => j.id === currentQuestion?.subsectionid
-                      )
-                    )
-                )
-                  ? results.results
-                      .find(
-                        (i) =>
-                          i.sectionId ===
-                          survey?.sections?.find((i) =>
-                            i.subsections.find(
-                              (j) => j.id === currentQuestion?.subsectionid
-                            )
-                          )?.id
-                      )
-                      ?.subsections.find(
-                        (j) => j.id === currentQuestion?.subsectionid
-                      )?.id
-                  : survey?.sections
-                      ?.find((i) =>
-                        i.subsections.find(
-                          (j) => j.id === currentQuestion?.subsectionid
-                        )
-                      )
-                      ?.subsections.find(
-                        (j) => j.id === currentQuestion?.subsectionid
-                      )?.id || "",
-                responses: [
-                  {
-                    questionId: results.results.find(
-                      (i) =>
-                        i.sectionId ===
-                        survey?.sections?.find((i) =>
-                          i.subsections.find(
-                            (j) => j.id === currentQuestion?.subsectionid
-                          )
-                        )
-                    )
-                      ? results.results
-                          .find(
-                            (i) =>
-                              i.sectionId ===
-                              survey?.sections?.find((i) =>
-                                i.subsections.find(
-                                  (j) => j.id === currentQuestion?.subsectionid
-                                )
-                              )?.id
-                          )
-                          ?.subsections.find(
-                            (j) => j.id === currentQuestion?.subsectionid
-                          )
-                          ?.responses.find(
-                            (j) => j.questionId === currentQuestion?.id
-                          )?.questionId
-                      : currentQuestion?.id,
-                    points: points,
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      });
+    const nextIndex = index + 1;
+
+    if (allQuestions.length - 1 !== index) {
+      setIndex(nextIndex);
+      setCurrentQuestion(allQuestions[nextIndex]);
     } else {
       setIsOpen(true);
       setProgress(100);
     }
 
-    console.log(results, "results", survey);
+    const subsectionId = currentQuestion?.subsectionid;
+    const sectionId = survey?.sections?.find((i) =>
+      i.subsections?.find((j) => j.id === subsectionId)
+    )?.id;
+    const questionId = currentQuestion?.id;
+
+    setTempResult((prev) => [
+      ...prev,
+      {
+        points,
+        questionId,
+        sectionId,
+        subsectionId,
+      } as any,
+    ]);
   };
+
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     const result = tempResult.map((i) => {
+  //       const sameSubsectionQuestions = tempResult
+  //         .filter((j) => j.subsectionId === i.subsectionId)
+  //         .map((i) => ({
+  //           questionId: i.questionId,
+  //           points: i.points,
+  //         }));
+  //       const sameSectionSubsections = tempResult
+  //         .filter((j) => j.sectionId === i.sectionId)
+  //         .map((i) => ({
+  //           subsectionId: i.subsectionId,
+  //           responses: sameSubsectionQuestions,
+  //         }))[0];
+  //       const sameSurveySections = tempResult
+  //         .filter((j) => j.sectionId === i.sectionId)
+  //         .map((i) => ({
+  //           sectionId: i.sectionId,
+  //           subsections: sameSectionSubsections,
+  //         }))[0];
+  //       return {
+  //         sameSurveySections,
+  //       };
+  //     })
+
+  //     setResults({ surveyId,
+  //       // remove the repeated result
+  //       results:
+
+  //     });
+  //     console.log({ surveyId, results: result });
+  //   }
+  // }, [isOpen]);
+  useEffect(() => {
+    if (isOpen) {
+      const uniqueResults = tempResult.reduce((acc, current) => {
+        // Check if there is an existing result with the same sectionId
+        const existingResultIndex = acc.findIndex(
+          (item) => item.sectionId === current.sectionId
+        );
+
+        if (existingResultIndex === -1) {
+          // If not found, add a new entry
+          acc.push({
+            sectionId: current.sectionId,
+            subsections: [
+              {
+                subsectionId: current.subsectionId,
+                responses: [
+                  {
+                    questionId: current.questionId,
+                    points: current.points,
+                  },
+                ],
+              },
+            ],
+          });
+        } else {
+          // If found, check if there is an existing subsectionId
+          const existingSubsectionIndex = acc[
+            existingResultIndex
+          ].subsections.findIndex(
+            (item) => item.subsectionId === current.subsectionId
+          );
+
+          if (existingSubsectionIndex === -1) {
+            // If not found, add a new subsection entry
+            acc[existingResultIndex].subsections.push({
+              subsectionId: current.subsectionId,
+              responses: [
+                {
+                  questionId: current.questionId,
+                  points: current.points,
+                },
+              ],
+            });
+          } else {
+            // If found, add the response to the existing subsection entry
+            acc[existingResultIndex].subsections[
+              existingSubsectionIndex
+            ].responses.push({
+              questionId: current.questionId,
+              points: current.points,
+            });
+          }
+        }
+
+        return acc;
+      }, []);
+
+      setResults({
+        surveyId,
+        results: uniqueResults,
+      });
+
+      console.log({ surveyId, results: uniqueResults });
+    }
+  }, [isOpen]);
 
   const getQuestionsFromSurvey = () => {
     if (survey.sections) {
