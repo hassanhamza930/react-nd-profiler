@@ -6,7 +6,7 @@ import Modal from "./Modal";
 import EditSurvey from "./Modals/Surveys/EditSurvey";
 import { useNavigate } from "react-router-dom";
 import DeleteSurvey from "./Modals/DeleteModal";
-import { deleteSurvey } from "../../helpers/surveys";
+import { deleteSurvey, getCompleteSurveys } from "../../helpers/surveys";
 import { Link } from "react-router-dom";
 import { getResultsData } from "../../helpers/result";
 import { Database } from "../../Types/supabase";
@@ -20,7 +20,7 @@ const SurveyCard = ({ survey }: { survey:Database["public"]["Tables"]["surveys"]
   const [progress, setProgress] = useState<number | null>(null);
   const [loading, setIsLoading] = useState(false);
   const [numberOfQuestions, setnumberOfQuestions] = useState(0);
-
+const [completedSurveys,setCompletedSurvey] = useState<string[]>([])
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +30,7 @@ const SurveyCard = ({ survey }: { survey:Database["public"]["Tables"]["surveys"]
     const fetchData = async () => {
       setQuestions(await getQuestionsById(survey?.id));
       getResultsData(uid, survey?.id, setResults);
+      getCompleteSurveys(uid,setCompletedSurvey)
     };
     fetchData().finally(() => {
       setIsLoading(false);
@@ -78,16 +79,16 @@ const SurveyCard = ({ survey }: { survey:Database["public"]["Tables"]["surveys"]
                   <p className="text-sm font-normal">
                     {numberOfQuestions} questions
                   </p>
-                ) : (
-                  <p className="text-sm font-normal">
-                    {/* Completed {results && results?.length} questions */}
-                    {numberOfQuestions} questions
-
-                  </p>
-                )}
+                ) : role != "admin" && completedSurveys && completedSurveys.includes(survey?.id)
+                ? <p className="text-sm font-normal">
+                Completed Survey
+              </p> : <p className="text-sm font-normal">
+              {numberOfQuestions} questions
+              </p>
+                }
               </div>
               <div className="flex justify-end mb-3">
-                {results && results?.length == numberOfQuestions ? (
+                {completedSurveys && completedSurveys.includes(survey?.id) ? (
                   <Button
                     className={`bg-white text-sm font-normal  p-4 whitespace-nowrap ${
                       results?.length == numberOfQuestions
@@ -98,7 +99,7 @@ const SurveyCard = ({ survey }: { survey:Database["public"]["Tables"]["surveys"]
                   >
                     Results
                   </Button>
-                ) :(
+                ) : (
                   <Button
                     className={`bg-white text-sm p-4 whitespace-nowrap font-regular ${
                       results?.length == numberOfQuestions

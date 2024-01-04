@@ -40,6 +40,22 @@ export const getSurveys = async (
   }
 };
 
+export const getCompleteSurveys=async(userId:string,setCompletedSurveys:(args:string[])=>void)=>{
+
+  const completedSurveysRef = collection(
+    db,
+    "users",
+    userId,
+    "completedSurveys"
+  );
+  const completedSurveysQuery = query(completedSurveysRef);
+  const completedSurveysSnapshot = await getDocs(completedSurveysQuery);
+  const completedSurveyIds = completedSurveysSnapshot.docs.map((doc) => doc.data().surveyId);
+console.log(completedSurveyIds)
+setCompletedSurveys(completedSurveyIds)
+
+}
+
 export const getSurveyById = async (
   surveyId: string,
   setSurveys: (data: any) => void
