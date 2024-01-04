@@ -8,21 +8,20 @@ export const getSurveys = async (
   filter: string,
   setSurveys: (data: any) => void
 ) => {
-//   const completedSurveysRef = collection(
-//     db,
-//     "users",
-//     localStorage.getItem("uid"),
-//     "completedSurveys"
-//   );
-//   const completedSurveysQuery = query(completedSurveysRef);
-//   const completedSurveysSnapshot = await getDocs(completedSurveysQuery);
-//   const completedSurveyIds = completedSurveysSnapshot.docs.map((doc) => doc.data().surveyId);
-// console.log(completedSurveyIds)
+  //   const completedSurveysRef = collection(
+  //     db,
+  //     "users",
+  //     localStorage.getItem("uid"),
+  //     "completedSurveys"
+  //   );
+  //   const completedSurveysQuery = query(completedSurveysRef);
+  //   const completedSurveysSnapshot = await getDocs(completedSurveysQuery);
+  //   const completedSurveyIds = completedSurveysSnapshot.docs.map((doc) => doc.data().surveyId);
+  // console.log(completedSurveyIds)
   const { data, error } = await supabaseClient
     .from("surveys")
     .select("*, sections(*,subsections(*,questions(*)))")
-    .eq("role", filter)
-    .order("id", { ascending: true });
+    .eq("role", filter);
   if (error) {
     toast.error(error.message);
   } else {
@@ -40,8 +39,11 @@ export const getSurveys = async (
   }
 };
 
-export const getCompleteSurveys=async(userId:string,setCompletedSurveys:(args:string[])=>void)=>{
-
+export const getCompleteSurveys = async (
+  userId: string,
+  setCompletedSurveys: (args: string[]) => void,
+  
+) => {
   const completedSurveysRef = collection(
     db,
     "users",
@@ -50,11 +52,12 @@ export const getCompleteSurveys=async(userId:string,setCompletedSurveys:(args:st
   );
   const completedSurveysQuery = query(completedSurveysRef);
   const completedSurveysSnapshot = await getDocs(completedSurveysQuery);
-  const completedSurveyIds = completedSurveysSnapshot.docs.map((doc) => doc.data().surveyId);
-console.log(completedSurveyIds)
-setCompletedSurveys(completedSurveyIds)
-
-}
+  const completedSurveyIds = completedSurveysSnapshot.docs.map(
+    (doc) => doc.data().surveyId
+  );
+  console.log(completedSurveyIds);
+  setCompletedSurveys(completedSurveyIds);
+};
 
 export const getSurveyById = async (
   surveyId: string,
@@ -72,7 +75,10 @@ export const getSurveyById = async (
   }
 };
 
-export const createSurvey = async (newSurveyData: any) => {
+export const createSurvey = async (
+  newSurveyData: any,
+  setRender: (args: boolean) => void
+) => {
   const { error } = await supabaseClient.from("surveys").insert({
     title: newSurveyData.title,
     description: newSurveyData.description,
@@ -80,6 +86,7 @@ export const createSurvey = async (newSurveyData: any) => {
   });
   if (!error) {
     toast.success("Survey created successfully");
+    setRender(true);
   } else {
     console.error("Error creating survey:", error);
     return;
@@ -88,7 +95,8 @@ export const createSurvey = async (newSurveyData: any) => {
 
 export const updateSurvey = async (
   surveyId: string,
-  updatedData: Database["public"]["Tables"]["surveys"]["Update"]
+  updatedData: Database["public"]["Tables"]["surveys"]["Update"],
+  setRender: (args: boolean) => void
 ) => {
   const { error } = await supabaseClient
     .from("surveys")
@@ -100,19 +108,24 @@ export const updateSurvey = async (
     .eq("id", surveyId);
   if (!error) {
     toast.success("Survey Update Successfully");
+    setRender(true);
   } else {
     console.log("error", error);
     toast.error("Survey did not Update, Something went wrong!");
   }
 };
 
-export const deleteSurvey = async (surveyId: string) => {
+export const deleteSurvey = async (
+  surveyId: string,
+  setRender: (args: boolean) => void
+) => {
   const { error } = await supabaseClient
     .from("surveys")
     .delete()
     .eq("id", surveyId);
   if (!error) {
     toast.success("Survey deleted Successfully");
+    setRender(true);
   } else {
     console.log("error", error);
     toast.error("Survey did not delete, Something went wrong!");

@@ -36,11 +36,11 @@ const Result = () => {
 
   useEffect(() => {
     const uid = localStorage.getItem("uid")!;
-    // getDoc(doc(collection(db, "users"), uid)).then((doc) => {
-    //   if (doc.exists()) {
-    //     setUser({ ...(doc.data() as User) });
-    //   }
-    // });
+    getDoc(doc(collection(db, "users"), uid)).then((doc) => {
+      if (doc.exists()) {
+        setUser({ ...(doc.data() as User) });
+      }
+    });
   }, []);
 
   // useEffect(() => {

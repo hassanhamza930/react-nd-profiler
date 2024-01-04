@@ -2,7 +2,7 @@
 import React from "react";
 
 
-const BuyButtonComponent = ({buttonId,publishable_key,clientRefId}:{buttonId:string;publishable_key:string;clientRefId:string}) => {
+const BuyButtonComponent = ({buttonId,publishable_key,clientRefId,customerEmail}:{buttonId:string;publishable_key:string;clientRefId:string,customerEmail:string}) => {
   // Paste the stripe-buy-button snippet in your React component
   return (
     <stripe-buy-button
@@ -12,6 +12,7 @@ const BuyButtonComponent = ({buttonId,publishable_key,clientRefId}:{buttonId:str
     buy-button-id={buttonId}
      publishable-key={publishable_key}
      client-reference-id={clientRefId}
+     customer-email={customerEmail}
     ></stripe-buy-button>
   );
 };

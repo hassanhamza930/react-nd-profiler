@@ -14,7 +14,7 @@ const AdminDashboard = () => {
     useState<Database["public"]["Tables"]["surveys"]["Row"][]>();
   const [filter, setFilter] = useState<string>();
   const [isOpen, setIsOpen] = useState(false);
-  const [render,setRender] = useState<boolean>(false)
+  const [render, setRender] = useState<boolean>(false);
 
   useEffect(() => {
     setFilter(
@@ -26,14 +26,14 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!filter) return;
-    if (isOpen) return;
-  
+    console.log("render",render)
     const fetchData = async () => {
-      await getSurveys(filter, setSurveys);
-      setRender(false)
+      await getSurveys(filter, setSurveys).finally(() => {
+        setRender(false);
+      });
     };
     fetchData();
-  }, [filter, isOpen,render]);
+  }, [filter, render]);
 
   return (
     <div>
@@ -54,7 +54,7 @@ const AdminDashboard = () => {
         {surveys?.map((survey, index) => {
           return (
             <div key={index}>
-              <SurveyCard survey={survey}  />
+              <SurveyCard survey={survey} setRender={setRender} />
             </div>
           );
         })}
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
         title="Create Survey"
         onChange={() => setIsOpen(false)}
       >
-        <CreateSurvey handleClose={() => setIsOpen(false)} />
+        <CreateSurvey handleClose={() => setIsOpen(false)} setRender={setRender} />
       </Modal>
     </div>
   );

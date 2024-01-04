@@ -178,43 +178,39 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
 
       console.log({ surveyId, results: uniqueResults });
       // console.log({uniqueResults})
-      calculteresults(uniqueResults);
+      calculateResults(uniqueResults);
     }
   }, [isOpen]);
-
-  const calculteresults = async (uniqueResults) => {
-    const totalSurveyPoints = 100;
-
+  const calculateResults = async (uniqueResults) => {
     // Initialize result object
     const resultObject = {
       surveyId: surveyId,
       scoreBySection: [],
       recommendations: [],
     };
-
+  
+    // Function to calculate subsection total score
+    const calculateSubsectionTotal = (subsection) => {
+      return subsection.responses.reduce((acc, response) => acc + response.points, 0);
+    };
+  
     // Iterate through results
-    for (const result of uniqueResults) {
-      // Initialize total score for the current section
-      let sectionTotalScore = 0;
-
-      // Iterate through subsections
-      for (const subsection of result.subsections) {
-        // Iterate through responses
-        for (const response of subsection.responses) {
-          // Accumulate points for the current section
-          sectionTotalScore += response.points;
-        }
-      }
-
+    uniqueResults.forEach((result) => {
+      // Calculate total score for the current section
+      const sectionTotalScore = result.subsections.reduce((acc, subsection) => {
+        return acc + calculateSubsectionTotal(subsection) / subsection.responses.length;
+      }, 0);
+  
       // Calculate proportionate points for the section based on the total survey points
-      const proportionatePoints =
-        (sectionTotalScore / result.subsections.length) * totalSurveyPoints
-
+      const proportionatePoints = (sectionTotalScore / result.subsections.length) * 100;
+  
       // Add section and its proportionate points to the result object
       resultObject.scoreBySection.push({
         section: result.sectionname,
         score: proportionatePoints,
       });
+  
+      // Determine recommendation based on proportionate points (customize this logic)
       const recommendation =
       proportionatePoints >= 75
         ? result.sectionRecOne
@@ -222,15 +218,15 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
         ? result.sectionRecTwo
         : result.sectionRecThree;
 
-    resultObject.recommendations.push({
-      section: result.sectionname,
-      recommendation: recommendation,
+      resultObject.recommendations.push({
+        section: result.sectionname,
+        recommendation: recommendation,
+      });
     });
-  }
-    
-
+  
     console.log(resultObject);
     console.log(userId);
+  
     try {
       await addDoc(
         collection(db, "users", userId, "completedSurveys"),
@@ -240,7 +236,17 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
       console.log("Error completedSurveys", error.message);
     }
   };
-
+  
+  // Example usage:
+  // calculateResults(data.results, data.surveyId, "user123");
+  
+  
+  // Example usage:
+  // calculateResults(data.results, data.surveyId, "user123");
+  
+  // Example usage:
+  // calculateResults(uniqueResultsArray, "survey123", "user456");
+  
   const getQuestionsFromSurvey = () => {
     if (survey.sections) {
       return survey.sections.reduce(
