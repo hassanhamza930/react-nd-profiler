@@ -177,13 +177,13 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
       });
 
       console.log({ surveyId, results: uniqueResults });
+      // console.log({uniqueResults})
       calculteresults(uniqueResults);
     }
   }, [isOpen]);
 
   const calculteresults = async (uniqueResults) => {
     const totalSurveyPoints = 100;
-    const pointsPerSection = totalSurveyPoints / uniqueResults.length;
 
     // Initialize result object
     const resultObject = {
@@ -208,7 +208,7 @@ const QuestionForm: React.FC<Props> = ({ questions }) => {
 
       // Calculate proportionate points for the section based on the total survey points
       const proportionatePoints =
-        (sectionTotalScore / result.subsections.length) * pointsPerSection;
+        (sectionTotalScore / result.subsections.length) * totalSurveyPoints
 
       // Add section and its proportionate points to the result object
       resultObject.scoreBySection.push({
