@@ -4,26 +4,28 @@ import Input from "../../Input";
 import Button from "../../Button";
 import { Survey } from "../../../../Types";
 import { updateSurvey } from "../../../../helpers/surveys";
+import { Database } from "../../../../Types/supabase";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  survey: Survey;
+  survey: Database["public"]["Tables"]["surveys"]["Row"];
   handleClose: () => void;
+  setRender: any;
 }
 
-const EditSurvey: React.FC<Props> = ({ handleClose, survey }) => {
-  const [title, setTitle] = useState(survey?.title);
-  const [tagline, setTagline] = useState(survey?.tagline);
-  const [description, setDescription] = useState(survey?.description);
-  const [role,setRole]=useState(survey?.role)
+const EditSurvey: React.FC<Props> = ({ handleClose, survey,setRender }) => {
+  const [title, setTitle] = useState<Database["public"]["Tables"]["surveys"]["Row"]["title"]>(survey?.title);
+  // const [tagline, setTagline] = useState<any>(survey?.tagline);
+  const [description, setDescription] = useState<Database["public"]["Tables"]["surveys"]["Row"]["description"]>(survey?.description);
+  const [role,setRole]=useState<Database["public"]["Tables"]["surveys"]["Row"]["role"]>(survey?.role)
 
   const handelClick = () => {
     const data = {
       title,
-      tagline,
+      // tagline,
       description,
       role
     };
-    updateSurvey(survey?.id, data);
+    updateSurvey(survey?.id, data,setRender)
     handleClose();
   };
 
@@ -36,13 +38,13 @@ const EditSurvey: React.FC<Props> = ({ handleClose, survey }) => {
         onChange={(e) => setTitle(e.target.value)}
         className="mb-7"
       />
-      <h6 className="text-lg font-semibold mb-3">Tagline</h6>
+      {/* <h6 className="text-lg font-semibold mb-3">Tagline</h6>
       <Input
         placeholder="Enter tagline"
         value={tagline}
         onChange={(e) => setTagline(e.target.value)}
         className="mb-7"
-      />
+      /> */}
       <h6 className="text-lg font-semibold mb-3">Select Role</h6>
       <select
         id="role"

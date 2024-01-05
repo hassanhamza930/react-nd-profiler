@@ -1,16 +1,15 @@
-;
 import React, { useState } from "react";
 import Input from "../../Input";
 import Button from "../../Button";
 import { createSurvey } from "../../../../helpers/surveys";
 import { toast } from "react-toastify";
 
-
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   handleClose: () => void;
+  setRender: (args: boolean) => void;
 }
 
-const CreateSurvey: React.FC<Props> = ({ handleClose }) => {
+const CreateSurvey: React.FC<Props> = ({ handleClose, setRender }) => {
   const [title, setTitle] = useState<string>();
   const [tagline, setTagline] = useState<string>();
   const [description, setDescription] = useState<string>();
@@ -33,7 +32,7 @@ const CreateSurvey: React.FC<Props> = ({ handleClose }) => {
     } else if (!role) {
       return toast.error("role is not selected");
     } else {
-      createSurvey(data);
+      createSurvey(data, setRender);
       handleClose();
     }
   };

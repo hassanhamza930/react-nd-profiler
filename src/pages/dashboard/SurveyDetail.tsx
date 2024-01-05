@@ -23,10 +23,14 @@ import EditRecommendation from "../../components/ui/Modals/Recommendations/EditR
 import CreateSubSection from "../../components/ui/Modals/Sections copy/CreateSubSection";
 import EditSubSection from "../../components/ui/Modals/Sections copy/EditSubSection";
 import { BiDotsVertical } from "react-icons/bi";
+import { Database } from "../../Types/supabase";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const SurveyDetail = () => {
   const [questions, setQuestions] = useState<Array<Question>>();
-  const [sections, setSections] = useState<Array<Section>>();
+  const [sections, setSections] =
+    useState<Database["public"]["Tables"]["sections"]["Row"]>();
+  const [render, setRender] = useState<boolean>(false);
   const [survey, setSurvey] = useState<Survey>();
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -55,7 +59,9 @@ const SurveyDetail = () => {
     setRole(localStorage.getItem("role")!);
 
     setIsLoading(true);
+    setRender(false);
     getSurveyById(currentUrl, setSurvey);
+
     const uid = localStorage.getItem("uid")!;
     const fetchData = async () => {
       getResultsData(uid, survey!.id, setResults);
@@ -63,43 +69,44 @@ const SurveyDetail = () => {
       setQuestions(await getQuestionsById(currentUrl));
       setIsLoading(false);
     };
+
     fetchData()
       .then(() => console.log("done"))
       .catch((err) => console.log("err", err));
-  }, [currentUrl, survey?.id]);
+  }, [currentUrl, survey?.id, render]);
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const db = getFirestore();
-        const surveyDocRef = doc(collection(db, "surveys"), survey?.id);
-        const sectionDocRef = doc(surveyDocRef, "sections", sectionId);
-        const recommendationsCollectionRef = collection(
-          sectionDocRef,
-          "recommendations"
-        );
-
-        const querySnapshot = await getDocs(recommendationsCollectionRef);
-
-        const recommendationsData = querySnapshot.docs.map((doc) => {
-          return { id: doc.id, ...doc.data() } as Recommendation;
-        });
-
-        setRecommendations(recommendationsData[0]);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setRecommendations(null);
-      }
+      //   try {
+      //     const db = getFirestore();
+      //     const surveyDocRef = doc(collection(db, "surveys"), survey?.id);
+      //     const sectionDocRef = doc(surveyDocRef, "sections", sectionId);
+      //     const recommendationsCollectionRef = collection(
+      //       sectionDocRef,
+      //       "recommendations"
+      //     );
+      //     const querySnapshot = await getDocs(recommendationsCollectionRef);
+      //     const recommendationsData = querySnapshot.docs.map((doc) => {
+      //       return { id: doc.id, ...doc.data() } as Recommendation;
+      //     });
+      //     setRecommendations(recommendationsData[0]);
+      //   } catch (error) {
+      //     console.error("Error fetching data:", error);
+      //     setRecommendations(null);
+      //   }
     };
 
     fetchData();
-  }, [survey?.id, sectionId]);
+  }, [survey?.id, sectionId, section]);
+
+  // console.log("sections", sections);
 
   const handelClick = () => {
     if (!sectionId) return;
     deleteSection(survey!.id, sectionId!);
     setIsDeleteOpen(false);
     setSectionId("");
+    setRender(true);
   };
 
   const handelSubSectionDelete = () => {
@@ -107,12 +114,22 @@ const SurveyDetail = () => {
     deleteSubsection(survey!.id, sectionId!, subSectionId);
     setIsSubSectionDeleteOpen(false);
     setSubSectionId("");
+    setRender(true);
   };
-
+  // console.log("survey",survey)
   return (
     <>
-      {loading ? (
-        <Loading />
+      {render || loading ? (
+        <div className="w-full min-h-[100vh] justify-center items-center flex">
+          <ClipLoader
+            color={"#3b82f6"}
+            loading={render || loading}
+            // cssOverride={override}
+            size={50}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
       ) : (
         <div>
           <Header heading="Dashboard" />
@@ -136,34 +153,12 @@ const SurveyDetail = () => {
                   : `${questions && questions?.length} Questions`}
               </h2>
               {role !== "admin" ? (
-                results && results?.length == questions?.length ? (
-                  <Button
-                    className="bg-[#3C3C3C] text-lg text-white w-[182px] h-[49px]"
-                    onClick={() => navigate(`/dashboard/result/${currentUrl}`)}
-                  >
-                    Results
-                  </Button>
-                ) : results &&
-                  results?.length !== 0 &&
-                  results?.length < (questions?.length || 0) ? (
-                  <Button
-                    className="bg-[#3C3C3C] text-lg text-white w-[182px] h-[49px]"
-                    onClick={() =>
-                      navigate(`/dashboard/question/${currentUrl}`)
-                    }
-                  >
-                    Resume
-                  </Button>
-                ) : (
-                  <Button
-                    className="bg-[#3C3C3C] text-lg text-white w-[182px] h-[49px]"
-                    onClick={() =>
-                      navigate(`/dashboard/question/${currentUrl}`)
-                    }
-                  >
-                    Start
-                  </Button>
-                )
+                <Button
+                  className="bg-[#3C3C3C] text-lg text-white w-[182px] h-[49px]"
+                  onClick={() => navigate(`/dashboard/question/${currentUrl}`)}
+                >
+                  Start
+                </Button>
               ) : (
                 <div>
                   <Button
@@ -216,18 +211,13 @@ const SurveyDetail = () => {
                                     </p>
                                     <p
                                       onClick={() => {
-                                        if (recommendations) {
-                                          setIsEditRecoOpen(true);
-                                        } else {
-                                          setIsCreateRecoOpen(true);
-                                        }
+                                        setIsCreateRecoOpen(true);
+                                        setSection(val);
                                         setIsDropDownOpen("");
                                       }}
                                       className="block cursor-pointer px-4 py-2 text-sm text-gray-600 capitalize transition-colors duration-300 transform  hover:bg-gray-100 "
                                     >
-                                      {recommendations
-                                        ? "Edit Recommendation"
-                                        : "Create Recommendation"}
+                                      Add Recommendations
                                     </p>{" "}
                                     <p
                                       onClick={() => {
@@ -339,7 +329,11 @@ const SurveyDetail = () => {
             title="Create Section"
             onChange={() => setIsOpen(false)}
           >
-            <CreateSection surveyId={survey?.id || ""} setIsOpen={setIsOpen} />
+            <CreateSection
+              surveyId={survey?.id || ""}
+              setIsOpen={setIsOpen}
+              setRender={setRender}
+            />
           </Modal>
           <Modal
             isOpen={isEditOpen}
@@ -350,6 +344,7 @@ const SurveyDetail = () => {
               surveyId={survey?.id || ""}
               setIsOpen={setIsEditOpen}
               section={section!}
+              setRender={setRender}
             />
           </Modal>
           <Modal
@@ -361,6 +356,7 @@ const SurveyDetail = () => {
               surveyId={survey?.id || ""}
               sectionId={sectionId}
               setIsOpen={setIsSubSectionCreateOpen}
+              setRender={setRender}
             />
           </Modal>
           <Modal
@@ -372,7 +368,8 @@ const SurveyDetail = () => {
               surveyId={survey?.id || ""}
               sectionId={sectionId}
               setIsOpen={setIsSubSectionEditOpen}
-              subsection={subSection!}
+              subsection={subSection}
+              setRender={setRender}
             />
           </Modal>
           <Modal
@@ -410,6 +407,7 @@ const SurveyDetail = () => {
               surveyId={survey?.id}
               sectionId={sectionId}
               setIsCreateOpen={setIsCreateRecoOpen}
+              section={section!}
             />
           </Modal>
           {recommendations && (

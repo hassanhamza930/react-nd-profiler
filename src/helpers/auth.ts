@@ -52,13 +52,16 @@ export const handleSignUp = async (
       lastName: lastName,
       email: email,
       role: role,
+      package: "freemium",
     } as User)
       .then(() => {
         localStorage.setItem("role", role);
         localStorage.setItem("uid", uid);
         localStorage.setItem("isLoggedIn", "true");
         toast.success("Account created successfully");
-        window.location.href=`/dashboard/${role == "admin" ? "admin" : "user"}`;
+        window.location.href = `/dashboard/${
+          role == "admin" ? "admin" : "user"
+        }`;
         setIsLoading(false);
       })
       .catch((error) => {
@@ -99,14 +102,13 @@ export const handleLogin = async (
         getDoc(userDocRef).then((docSnapshot) => {
           if (docSnapshot.exists()) {
             localStorage.setItem("role", docSnapshot.data().role);
+            localStorage.setItem("email", docSnapshot.data().email);
             localStorage.setItem("uid", uid);
             localStorage.setItem("isLoggedIn", "true");
 
-            window.location.href=(
-              `/dashboard/${
-                docSnapshot.data().role == "admin" ? "admin" : "user"
-              }`
-            );
+            window.location.href = `/dashboard/${
+              docSnapshot.data().role == "admin" ? "admin" : "user"
+            }`;
             toast.success("Logged in successfully");
           }
         });

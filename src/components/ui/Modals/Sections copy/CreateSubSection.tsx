@@ -6,15 +6,17 @@ import { createSubsection } from "../../../../helpers/sections";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   setIsOpen: (args:boolean) => void;
+  setRender: (args:boolean) => void;
   surveyId:string,
   sectionId:string
+  
 }
 
-const CreateSubSection: React.FC<Props> = ({ setIsOpen,surveyId,sectionId }) => {
+const CreateSubSection: React.FC<Props> = ({ setRender,setIsOpen,surveyId,sectionId }) => {
   const [title, setTitle] = useState<string>();
 
   const handleCreate = () => {
-    createSubsection(surveyId!,sectionId, title!,setIsOpen)
+    createSubsection(sectionId, title!,setIsOpen,setRender)
     setTitle("")
   };
 

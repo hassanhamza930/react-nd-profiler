@@ -3,6 +3,7 @@ import Header from "../../components/header";
 import DownloadPdf from "../../components/ui/Buttons/DownloadPdf";
 import Chart from "../../components/ui/Chart";
 import {
+  getAllResultData,
   getFilteredRecommendationsData,
   getResults,
 } from "../../helpers/result";
@@ -12,7 +13,7 @@ import { collection, doc, getDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 
 const Result = () => {
-  const [results, setResults] = useState();
+  const [results, setResults] = useState([]);
   const [survey, setSurvey] = useState<Survey>();
   const [sections, setSections] = useState<string[]>();
   const [data, setData] = useState<any>(); // eslint-disable-line
@@ -27,9 +28,10 @@ const Result = () => {
     const uid = localStorage.getItem("uid")!;
     const fetchData = async () => {
       getSurveyById(surveyId, setSurvey);
-      getResults(uid, surveyId, setResults);
+      //   getResults(uid, surveyId, setResults);
     };
     fetchData();
+    getAllResultData(uid, surveyId, setResults);
   }, [surveyId]);
 
   useEffect(() => {
@@ -41,23 +43,25 @@ const Result = () => {
     });
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      getFilteredRecommendationsData(results!, setRecommendations, surveyId);
-    };
-    fetchData();
-  }, [results, surveyId]);
+  // useEffect(() => {
+  //    const fetchData = async () => {
+  //     getFilteredRecommendationsData(results!, setRecommendations, surveyId);
+  //   };
+  //   fetchData();
+  // }, [results, surveyId]);
 
   useEffect(() => {
-    setSections(
-      recommendations?.map((val: RecommendationData) => val.sectionTitle)
-    );
+    setSections(results[0]?.recommendations?.map((val: any) => val.section));
     setData(
-      recommendations?.map((val: RecommendationData) =>
-        val.percentage?.toFixed(0)
-      )
+      results[0]?.scoreBySection?.map((val: any) => val.score.toFixed(0))
     );
-  }, [recommendations]);
+  }, [recommendations, results]);
+
+  useEffect(() => {
+    if (results) {
+      setRecommendations(results[0]?.recommendations);
+    }
+  }, [results]);
 
   return (
     <div>
@@ -67,35 +71,40 @@ const Result = () => {
         id="result"
       >
         <div className="w-7/12" id="graphElement">
-          <h2 className="text-3xl font-normal ps-7">Results & Recommendations</h2>
+          <h2 className="text-3xl font-normal ps-7">
+            Results & Recommendations
+          </h2>
           <p className="text-sm mt-2 mb-14 ps-7">{survey?.description}</p>
           <div className="me-28">
             <Chart sections={sections!} data={data} />
           </div>
         </div>
         <div id="recommendations">
-          {recommendations?.map((val, index) => {
-            return (
-              <div
-                key={index}
-                className="relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end mt-5 rounded-md text-white font-medium flex flex-col justify-between items-start overflow-hidden"
-              >
-                <div className="absolute z-10 bg-blue-600/50 backdrop-blur-lg h-full w-full"></div>
-                <div className="relative h-full w-full z-20 flex-col flex justify-between items-start p-5 ">
-                  <h2 className="text-2xl font-normal  mb-2 uppercase">
-                    {val?.sectionTitle}
-                  </h2>
-                  <div className="h-[2px] w-full bg-[#FFFFFF] rounded-full mb-3" />
-                  {val?.recommendation !== null && (
-                    <div
-                      className="ms-2 font-normal"
-                      dangerouslySetInnerHTML={{ __html: val?.recommendation }}
-                    />
-                  )}
+          {recommendations &&
+            recommendations?.map((val, index) => {
+              return (
+                <div
+                  key={index}
+                  className="relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end mt-5 rounded-md text-white font-medium flex flex-col justify-between items-start overflow-hidden"
+                >
+                  <div className="absolute z-10 bg-blue-600/50 backdrop-blur-lg h-full w-full"></div>
+                  <div className="relative h-full w-full z-20 flex-col flex justify-between items-start p-5 ">
+                    <h2 className="text-2xl font-normal  mb-2 uppercase">
+                      {val?.section}
+                    </h2>
+                    <div className="h-[2px] w-full bg-[#FFFFFF] rounded-full mb-3" />
+                    {val?.recommendation !== null && (
+                      <div
+                        className="ms-2 font-normal"
+                        dangerouslySetInnerHTML={{
+                          __html: val?.recommendation,
+                        }}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
       <div className="flex gap-7 mb-20 ps-7">
