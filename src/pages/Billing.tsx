@@ -3,34 +3,44 @@ import Header from "../components/header";
 import { FaHandHoldingDollar } from "react-icons/fa6";
 import BuyButtonComponent from "../components/ui/Buttons/BuyButtonComponent";
 import { Link } from "react-router-dom";
+import useGetUser from "../helpers/getUser";
 
 const Billing = () => {
   const [selected, setSelected] = useState(0);
+  const { user } = useGetUser();
+
   const onClickPlan = (index: number) => {
     setSelected(index);
   };
 
+
   return (
     <>
       <Header heading="Billing" />
-      <div className=" my-8">
-        <button className="px-4 py-4 bg-blue-600 text-white w-full max-w-[250px] rounded-lg"><Link target="_blank" to={"https://billing.stripe.com/p/login/test_6oE3dr70tbou9gc4gg"}>Manage Subscription</Link></button>
+      <div className="mt-8">
+        <button onClick={() => { window.open("https://billing.stripe.com/p/login/test_6oE3dr70tbou9gc4gg") }} className="px-4 py-4 bg-blue-600 text-white text-sm rounded-md">Manage Subscription</button>
       </div>
-      
-      <p className="mt-6 text-md font-regular capitalize">
-        Choose a plan to upgrade your package and experience best.
-      </p>
-      
+
+
+
       <div className="flex w-full gap-x-6 flex-wrap justify-center sm:justify-start">
-        
-        <BillingBox
-          title="Premium"
-          price={1000}
-          details={[]}
-          index={1}
-          onClick={onClickPlan}
-          selected={selected}
-        />
+        {
+          user.package == "freemium" ?
+            <div className="flex flex-col justify-start items-start">
+              <p className="mt-6 text-md font-regular capitalize">
+                Choose a plan to upgrade your package and experience best.
+              </p>
+              <BillingBox
+                title="Premium"
+                price={1000}
+                details={[]}
+                index={1}
+                onClick={onClickPlan}
+                selected={selected}
+              />
+            </div> :
+            <div className="mt-5">You are currently on the paid plan for <b>1000 USD per month</b></div>
+        }
       </div>
     </>
   );
@@ -47,6 +57,9 @@ type BillingProp = {
   selected: number;
 };
 
+
+
+
 const BillingBox = ({
   title,
   price,
@@ -57,7 +70,7 @@ const BillingBox = ({
 }: BillingProp) => {
   const ref_id = localStorage.getItem("uid");
   const email = localStorage.getItem("email");
-  console.log(ref_id, "ref_id"); 
+  console.log(ref_id, "ref_id");
   return (
     <div className="relative z-0 bg-[url('https://img.freepik.com/free-vector/dynamic-gradient-grainy-background_23-2148963687.jpg')] bg-cover bg-end w-full h-full max-w-[325px] mt-5 rounded-xl text-white font-medium flex flex-col justify-between items-start overflow-hidden shadow-md">
       <div className="absolute z-10 bg-blue-600/50 backdrop-blur-lg h-full w-full"></div>
@@ -66,13 +79,13 @@ const BillingBox = ({
         <FaHandHoldingDollar size={40} className="w-16" />
         <p className="text-md font-normal mt-6">$ {price}</p>
         <div className="mt-5">
-            <BuyButtonComponent
-              buttonId="buy_btn_1OSDlQAfze7OsrlF2L1XBG86"
-              publishable_key="pk_test_51ORGMMAfze7OsrlFNTMJifKHBm8B69cLJ5ORYtK2UBrxyV0Gkbqt2RuxpvzxJcKMoGmoUelXUVrCxE8K9or5wOlE000SctPe4q"
-              clientRefId={ref_id}
-              customerEmail={email}
-            />
-          
+          <BuyButtonComponent
+            buttonId="buy_btn_1OSDlQAfze7OsrlF2L1XBG86"
+            publishable_key="pk_test_51ORGMMAfze7OsrlFNTMJifKHBm8B69cLJ5ORYtK2UBrxyV0Gkbqt2RuxpvzxJcKMoGmoUelXUVrCxE8K9or5wOlE000SctPe4q"
+            clientRefId={ref_id}
+            customerEmail={email}
+          />
+
         </div>
       </div>
     </div>

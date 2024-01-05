@@ -78,7 +78,7 @@ const DownloadPdf: React.FC<Props> = ({
   };
 
   return (
-    <div className="flex justify-center items-center gap-x-3">
+    <div className="flex justify-center items-center gap-x-3 z-50">
       <Button
         className="bg-[#3C3C3C] text-md font-normal text-white w-[182px] h-[49px]"
         onClick={handleSendEmail}

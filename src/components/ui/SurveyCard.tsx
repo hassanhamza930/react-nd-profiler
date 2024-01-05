@@ -10,6 +10,8 @@ import { deleteSurvey, getCompleteSurveys } from "../../helpers/surveys";
 import { Link } from "react-router-dom";
 import { getResultsData } from "../../helpers/result";
 import { Database } from "../../Types/supabase";
+import useGetUser from "../../helpers/getUser";
+import { toast } from "react-toastify";
 
 const SurveyCard = ({
   survey,
@@ -29,6 +31,7 @@ const SurveyCard = ({
   const [numberOfQuestions, setnumberOfQuestions] = useState(0);
   const [completedSurveys, setCompletedSurvey] = useState<string[]>([]);
   const navigate = useNavigate();
+  const {user}=useGetUser();
 
   useEffect(() => {
     setIsLoading(true);
@@ -64,6 +67,9 @@ const SurveyCard = ({
     deleteSurvey(survey?.id, setRender);
     setIsDeleteOpen(false);
   };
+
+
+
   return loading ? (
     <div className="relative bg-gray-300 text-white rounded-2xl w-[300px] h-[235px] p-5 mt-5 flex flex-col justify-between animate-pulse"></div>
   ) : (
@@ -116,7 +122,13 @@ const SurveyCard = ({
                       ? "text-blue-600"
                       : "text-blue-600"
                   } w-[104px] h-[24px]`}
-                  onClick={() => navigate(`/dashboard/question/${survey.id}`)}
+                  onClick={() => {
+                    if(user.package=="freemium"){
+                      toast.error("Please Subscribe to the Premium Package to get access to surveys")
+                    }else{
+                      navigate(`/dashboard/question/${survey.id}`)
+                    }
+                }}
                 >
                   Start
                 </Button>

@@ -52,6 +52,7 @@ export const handleSignUp = async (
       lastName: lastName,
       email: email,
       role: role,
+      package: "freemium",
     } as User)
       .then(() => {
         localStorage.setItem("role", role);
