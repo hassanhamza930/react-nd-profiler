@@ -13,34 +13,42 @@ const Billing = () => {
     setSelected(index);
   };
 
-
   return (
     <>
       <Header heading="Billing" />
       <div className="mt-8">
-        <button onClick={() => { window.open("https://billing.stripe.com/p/login/test_6oE3dr70tbou9gc4gg") }} className="px-4 py-4 bg-blue-600 text-white text-sm rounded-md">Manage Subscription</button>
+        <button
+          onClick={() => {
+            window.open(
+              "https://billing.stripe.com/p/login/eVa7vm5EDeAl3a8cMM"
+            );
+          }}
+          className="px-4 py-4 bg-blue-600 text-white text-sm rounded-md"
+        >
+          Manage Subscription
+        </button>
       </div>
 
-
-
       <div className="flex w-full gap-x-6 flex-wrap justify-center sm:justify-start">
-        {
-          user.package == "freemium" ?
-            <div className="flex flex-col justify-start items-start">
-              <p className="mt-6 text-md font-regular capitalize">
-                Choose a plan to upgrade your package and experience best.
-              </p>
-              <BillingBox
-                title="Premium"
-                price={1000}
-                details={[]}
-                index={1}
-                onClick={onClickPlan}
-                selected={selected}
-              />
-            </div> :
-            <div className="mt-5">You are currently on the paid plan for <b>1000 USD per month</b></div>
-        }
+        {user.package !== "premium" ? (
+          <div className="flex flex-col justify-start items-start">
+            <p className="mt-6 text-md font-regular capitalize">
+              Choose a plan to upgrade your package and experience best.
+            </p>
+            <BillingBox
+              title="Premium"
+              price={1000}
+              details={[]}
+              index={1}
+              onClick={onClickPlan}
+              selected={selected}
+            />
+          </div>
+        ) : (
+          <div className="mt-5">
+            You are currently on the paid plan for <b>1000 USD per month</b>
+          </div>
+        )}
       </div>
     </>
   );
@@ -57,17 +65,7 @@ type BillingProp = {
   selected: number;
 };
 
-
-
-
-const BillingBox = ({
-  title,
-  price,
-  details,
-  onClick,
-  index,
-  selected,
-}: BillingProp) => {
+const BillingBox = ({ title, price }: BillingProp) => {
   const ref_id = localStorage.getItem("uid");
   const email = localStorage.getItem("email");
   console.log(ref_id, "ref_id");
@@ -80,12 +78,11 @@ const BillingBox = ({
         <p className="text-md font-normal mt-6">$ {price}</p>
         <div className="mt-5">
           <BuyButtonComponent
-            buttonId="buy_btn_1OSDlQAfze7OsrlF2L1XBG86"
-            publishable_key="pk_test_51ORGMMAfze7OsrlFNTMJifKHBm8B69cLJ5ORYtK2UBrxyV0Gkbqt2RuxpvzxJcKMoGmoUelXUVrCxE8K9or5wOlE000SctPe4q"
+            buttonId="buy_btn_1OmvBLHMk6dSdO1wPJ1Xczbj"
+            publishable_key="pk_test_51MyR7yHMk6dSdO1wlKzjSLGUKNvZODKUOY9gdFA0AWPIQ070CAU15FkaD2drkFa93xOjffJP2nfq8Kyr8bWSU3RH00qMrz1GUb"
             clientRefId={ref_id}
             customerEmail={email}
           />
-
         </div>
       </div>
     </div>
