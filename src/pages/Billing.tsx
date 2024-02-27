@@ -75,7 +75,7 @@ const BillingBox = ({ title, price }: BillingProp) => {
       <div className="relative h-full w-full z-20 flex-col flex justify-between items-center p-5 ">
         <p className="text-lg font-normal mb-4">{title}</p>
         <FaHandHoldingDollar size={40} className="w-16" />
-        <p className="text-md font-normal mt-6">$ {price}</p>
+        <p className="text-md font-normal mt-6">$10 / Month</p>
         <div className="mt-5">
           <BuyButtonComponent
             buttonId="buy_btn_1OmvBLHMk6dSdO1wPJ1Xczbj"
